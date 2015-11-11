@@ -9,6 +9,7 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include "Bst.h"
 
 using std::vector;
 using std::cout;
@@ -181,96 +182,7 @@ template <typename T> T f4(T, T);
 typedef char CType;
 template <typename Ctype> Ctype f5(Ctype a);
 
-template <typename, typename> class Bst;
 
-template <typename K, typename V>
-class Node
-{
-	friend class Bst<K, V>;
-public:
-	Node(const K key, const V val) : mKey(key), mVal(val), mLeft(nullptr), mRight(nullptr) {}
-
-	Node(const Node &node)
-	{
-		mKey = node.mKey;
-		mVal = node.mVal;
-	}
-
-	Node& operator=(const Node &rhs)
-	{
-		mKey = rhs.mKey;
-		mVal = rhs.mVal;
-
-		return *this;
-	}
-
-	K key()
-	{
-		return mKey;
-	}
-
-	V val()
-	{
-		return mVal;
-	}
-
-	bool operator<(const Node &rhs) const
-	{
-		return mKey < rhs.mKey;
-	}
-
-private:
-	K mKey;
-	V mVal;
-	Node *mLeft;
-	Node *mRight;
-};
-
-template <typename K, typename V>
-class Bst {
-public:
-	typedef Node<K, V> NodeT;
-
-	Bst() : mRoot(nullptr)
-	{
-	}
-
-	void put(K key, V val)
-	{
-		NodeT *node = new NodeT(key, val);
-		mRoot = put(mRoot, node);
-	}
-
-private:
-	NodeT *put(NodeT *x, NodeT *node)
-	{
-		if (x == nullptr)
-		{
-			cout << "Inserted " << node->mKey << endl;
-			return node;
-		}
-
-		if (*node < *x)
-		{
-			cout << "Going left to insert " << node->mKey << endl;
-			x->mLeft = put(x->mLeft, node);
-		}
-		else if (*x < *node)
-		{
-			cout << "Going right to insert " << node->mKey << endl;
-			x->mRight = put(x->mRight, node);
-		}
-		else
-		{
-			cout << "Replacing value in " << node->mKey << endl;
-			x->mVal = node->mVal;
-		}
-
-		return x;
-	}
-
-	NodeT *mRoot;
-};
 
 void testTree()
 {
