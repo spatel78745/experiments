@@ -13,6 +13,8 @@
 using std::vector;
 using std::cout;
 using std::endl;
+using std::string;
+using std::cerr;
 
 class BoolFunc
 {
@@ -179,8 +181,124 @@ template <typename T> T f4(T, T);
 typedef char CType;
 template <typename Ctype> Ctype f5(Ctype a);
 
+template <typename, typename> class Bst;
+
+template <typename K, typename V>
+class Node
+{
+	friend class Bst<K, V>;
+public:
+	Node(const K key, const V val) : mKey(key), mVal(val), mLeft(nullptr), mRight(nullptr) {}
+
+	Node(const Node &node)
+	{
+		mKey = node.mKey;
+		mVal = node.mVal;
+	}
+
+	Node& operator=(const Node &rhs)
+	{
+		mKey = rhs.mKey;
+		mVal = rhs.mVal;
+
+		return *this;
+	}
+
+	K key()
+	{
+		return mKey;
+	}
+
+	V val()
+	{
+		return mVal;
+	}
+
+	bool operator<(const Node &rhs) const
+	{
+		return mKey < rhs.mKey;
+	}
+
+private:
+	K mKey;
+	V mVal;
+	Node *mLeft;
+	Node *mRight;
+};
+
+template <typename K, typename V>
+class Bst {
+public:
+	typedef Node<K, V> NodeT;
+
+	Bst() : mRoot(nullptr)
+	{
+	}
+
+	void put(K key, V val)
+	{
+		NodeT *node = new NodeT(key, val);
+		mRoot = put(mRoot, node);
+	}
+
+private:
+	NodeT *put(NodeT *x, NodeT *node)
+	{
+		if (x == nullptr)
+		{
+			cout << "Inserted " << node->mKey << endl;
+			return node;
+		}
+
+		if (*node < *x)
+		{
+			cout << "Going left to insert " << node->mKey << endl;
+			x->mLeft = put(x->mLeft, node);
+		}
+		else if (*x < *node)
+		{
+			cout << "Going right to insert " << node->mKey << endl;
+			x->mRight = put(x->mRight, node);
+		}
+		else
+		{
+			cout << "Replacing value in " << node->mKey << endl;
+			x->mVal = node->mVal;
+		}
+
+		return x;
+	}
+
+	NodeT *mRoot;
+};
+
+void testTree()
+{
+	Bst<string, int> bst;
+
+	bst.put("H", 1);
+	bst.put("C", 2);
+	bst.put("S", 3);
+	bst.put("A", 4);
+	bst.put("E", 5);
+	bst.put("R", 6);
+	bst.put("X", 7);
+}
+
 int main()
 {
+
+//	Node<string, int> nodeH("H", 1);
+//	Node<string, int> nodeA("A", 1);
+//
+//	cout << "nodeH: " << nodeH.key() << endl;
+//	cout << "nodeA: " << nodeA.key() << endl;
+//
+//	cout << "nodeH < nodeA: " << (nodeH < nodeA) << endl;
+//	cout << "nodeA < nodeH: " << (nodeA < nodeH) << endl;
+
+	testTree();
+
 //	int a[3];
 //
 //	compare(&a, &a);
@@ -209,5 +327,5 @@ int main()
 //	cout << "array d has " << array_size(d) << " elements" << endl;
 //	cout << "array i has " << array_size(i) << " elements" << endl;
 
-	testQueueThread();
+//	testQueueThread();
 }
