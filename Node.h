@@ -8,7 +8,12 @@
 #ifndef NODE_H_
 #define NODE_H_
 
-template <typename, typename> class Bst;
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+template<typename, typename > class Bst;
 
 template<typename K, typename V>
 class Node
@@ -17,12 +22,7 @@ public:
 	friend class Bst<K, V> ;
 public:
 	Node(const K key, const V val) :
-			mKey(key), mVal(val), mLeft(nullptr), mRight(nullptr)
-	{
-	}
-
-	Node(const Node &node) :
-			Node(node.mKey, node.mVal)
+			mKey(key), mVal(val), mLeft(nullptr), mRight(nullptr), mParent(nullptr)
 	{
 	}
 
@@ -60,6 +60,7 @@ private:
 	V mVal;
 	Node *mLeft;
 	Node *mRight;
+	Node *mParent;
 };
 
 #endif /* NODE_H_ */

@@ -184,21 +184,11 @@ template <typename Ctype> Ctype f5(Ctype a);
 
 
 
-void testTree()
-{
-	Bst<string, int> bst;
-
-	bst.put("H", 1);
-	bst.put("C", 2);
-	bst.put("S", 3);
-	bst.put("A", 4);
-	bst.put("E", 5);
-	bst.put("R", 6);
-	bst.put("X", 7);
-}
-
 int main()
 {
+	extern void testTree();
+
+	testTree();
 
 //	Node<string, int> nodeH("H", 1);
 //	Node<string, int> nodeA("A", 1);
@@ -209,7 +199,6 @@ int main()
 //	cout << "nodeH < nodeA: " << (nodeH < nodeA) << endl;
 //	cout << "nodeA < nodeH: " << (nodeA < nodeH) << endl;
 
-	testTree();
 
 //	int a[3];
 //
