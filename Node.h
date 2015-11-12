@@ -22,7 +22,7 @@ public:
 	friend class Bst<K, V> ;
 public:
 	Node(const K key, const V val) :
-			mKey(key), mVal(val), mLeft(nullptr), mRight(nullptr), mParent(nullptr)
+			mKey(key), mVal(val), mSize(1), mLeft(nullptr), mRight(nullptr), mParent(nullptr)
 	{
 	}
 
@@ -58,6 +58,7 @@ public:
 private:
 	K mKey;
 	V mVal;
+	typename K::size_type mSize;
 	Node *mLeft;
 	Node *mRight;
 	Node *mParent;
