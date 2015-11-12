@@ -35,24 +35,23 @@ public:
 	void put(const K key, const V val)
 	{
 		NodeT *node = new NodeT(key, val);
-		mRoot = put(mRoot, nullptr, node);
+		mRoot = put(mRoot, node);
 	}
 
 	void print()
 	{
 		print(mRoot);
+		cerr << endl;
 	}
 
 private:
-	NodeT *put(NodeT *x, NodeT *p, NodeT *node)
+	NodeT *put(NodeT *x, NodeT *node)
 	{
-		std::string parentKey = ((p == nullptr) ? "no parent (root)" : " " + p->mKey);
+		std::string parentKey = ((x == nullptr || x->mParent == nullptr) ? "null" : x->mParent->mKey);
 
 		if (x == nullptr)
 		{
 			std::cerr << "Inserting " << node->mKey << " " << parentKey << "\n";
-
-			node->mParent = p;
 
 			return node;
 		}
@@ -60,12 +59,14 @@ private:
 		if (*node < *x)
 		{
 			std::cerr << "Going left from " << x->mKey << " to insert " << node->mKey << " parent " << parentKey << "\n";
-			x->mLeft = put(x->mLeft, x, node);
+			x->mLeft = put(x->mLeft, node);
+			x->mLeft->mParent = x;
 		}
 		else if (*x < *node)
 		{
 			std::cerr << "Going right from " << x->mKey << " to insert " << node->mKey << " parent " << parentKey << "\n";
-			x->mRight = put(x->mRight, x, node);
+			x->mRight = put(x->mRight, node);
+			x->mRight->mParent = x;
 		}
 		else
 		{
