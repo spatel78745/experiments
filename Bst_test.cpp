@@ -113,16 +113,35 @@ void testIsNull()
 	pf("null == a", !(NodeT::null() == a));
 }
 
-void testEqual()
+void testOpEqual()
 {
 	NodeT a1("a", 'a');
 	NodeT a2("a", 'a');
 	NodeT b("b", 'b');
 
-	header("equal");
+	header("equal ==");
 
 	pf("a1 == a2", a1 == a2);
 	pf("a1 == b", !(a1 == b));
+}
+
+void testOpIndex()
+{
+	header("index []");
+
+	for(int i = 0; i != gKeys.size(); ++i) {
+		string key = gKeys[i];
+		NodeT& node = gBst[key];
+		NodeT::value_type val = node.val();
+		cerr << "[ " << key << " ] = " << node.val() << endl;
+		if (val != i)
+		{
+			pf("[]", false);
+		}
+	}
+	pf("[]", true);
+
+	pf("[unknown]", gBst["unknown"] == NodeT::null());
 }
 
 void testTree()
@@ -130,5 +149,6 @@ void testTree()
 	testPut();
 	testGet();
 	testIsNull();
-	testEqual();
+	testOpEqual();
+	testOpIndex();
 }

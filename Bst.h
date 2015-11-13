@@ -44,9 +44,9 @@ public:
 
 	NodeT& operator[](K key)
 	{
-//		NodeT *node = get(key);
-//
-//		return (node == nullptr) ? NodeT::null()
+		NodeT *node = get(key);
+
+		return (node == nullptr) ? NodeT::null() : *node;
 	}
 
 	void put(const K key, const V val)

@@ -25,6 +25,8 @@ public:
 	friend class Bst<K, V> ;
 	friend bool operator==<K, V>(const Node<K, V>& lhs, const Node<K, V>& rhs);
 
+	typedef V value_type;
+
 	Node(const K key, const V val) :
 			mKey(key), mVal(val), mSize(1), mLeft(nullptr), mRight(nullptr), mParent(nullptr), mIsNull(false)
 	{
