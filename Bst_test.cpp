@@ -47,8 +47,9 @@ static void get(KeyT key)
 
 void testPut()
 {
+	header("put");
 
-	for(int i = 0; i != gKeys.size(); ++i)
+	for (int i = 0; i != gKeys.size(); ++i)
 	{
 		gBst.put(gKeys[i], i);
 	}
@@ -61,14 +62,17 @@ void testPut()
 
 void testGet()
 {
+	header("get");
+
 	bool debug = false;
 
-	for(int i = 0; i != gKeys.size(); ++i)
+	for (int i = 0; i != gKeys.size(); ++i)
 	{
 		string key = gKeys[i];
 		NodeT *node = gBst.get(key);
 
-		if (debug) cerr << "key: " << node->key() << " val: " << node->val() << endl;
+		if (debug)
+			cerr << "key: " << node->key() << " val: " << node->val() << endl;
 		if (node->key() != key)
 		{
 			cerr << "fail: expected key: " << key << ", got key: " << node->val() << endl;
@@ -94,8 +98,37 @@ void testGet()
 	pf("get", true);
 }
 
+void testNoConstIndex()
+{
+}
+
+void testIsNull()
+{
+	NodeT a("a", 'a');
+
+	header("null");
+
+
+	pf("null == null", NodeT::null() == NodeT::null());
+	pf("null == a", !(NodeT::null() == a));
+}
+
+void testEqual()
+{
+	NodeT a1("a", 'a');
+	NodeT a2("a", 'a');
+	NodeT b("b", 'b');
+
+	header("equal");
+
+	pf("a1 == a2", a1 == a2);
+	pf("a1 == b", !(a1 == b));
+}
+
 void testTree()
 {
 	testPut();
 	testGet();
+	testIsNull();
+	testEqual();
 }

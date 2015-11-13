@@ -42,15 +42,12 @@ public:
 		delete mRoot;
 	}
 
-//	NodeT& operator[](K key)
-//	{
-//		if (get(key) == nullptr) {
-//			V emptyVal;
-//			put(key, emptyVal);
-//		}
+	NodeT& operator[](K key)
+	{
+//		NodeT *node = get(key);
 //
-//		return *get(key);
-//	}
+//		return (node == nullptr) ? NodeT::null()
+	}
 
 	void put(const K key, const V val)
 	{
@@ -82,6 +79,8 @@ public:
 	}
 
 private:
+	static V emptyVal;
+
 	size_type size(NodeT *x)
 	{
 		if (x == nullptr)
