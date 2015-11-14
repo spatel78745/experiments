@@ -8,21 +8,17 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include "Bst.h"
 #include "Node.h"
 
-using std::string;
-using std::vector;
-using std::cerr;
-using std::endl;
+// TODO: Is doing this bad? Seems better then a long list of using std:: etc.
+using namespace std;
 
 typedef Bst<string, int> BstT;
-typedef BstT::value_type NodeT;
-typedef string KeyT;
-typedef int ValT;
-
-BstT gBst;
-vector<KeyT> gKeys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+typedef BstT::NodeT NodeT;
+typedef BstT::key_type KeyT;
+typedef BstT::value_type ValT;
 
 void header(string s)
 {
@@ -30,34 +26,30 @@ void header(string s)
 	cerr << border << " " << s << " " << border << endl;
 }
 
-void pf(string test, bool result)
+bool pf(string test, bool result)
 {
 	string pass_fail(result ? "pass" : "fail");
 	cerr << test << ": " << pass_fail << endl;
-}
 
-static void get(KeyT key)
-{
-	NodeT *node;
-
-	node = gBst.get(key);
-
-	cerr << "get(" << key << ") = { " << node->key() << ", " << node->val() << " }";
+	return result;
 }
 
 void testPut()
 {
 	header("put");
 
-	for (int i = 0; i != gKeys.size(); ++i)
+	BstT bst;
+	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+
+	for (int i = 0; i != keys.size(); ++i)
 	{
-		gBst.put(gKeys[i], i);
+		bst.put(keys[i], i);
 	}
 
-	gBst.print();
+	bst.print();
 
-	pf("size", gBst.size() == gKeys.size());
-	pf("height", gBst.height() == 4);
+	pf("size", bst.size() == keys.size());
+	pf("height", bst.height() == 4);
 }
 
 void testGet()
@@ -66,10 +58,24 @@ void testGet()
 
 	bool debug = false;
 
-	for (int i = 0; i != gKeys.size(); ++i)
+	BstT bst;
+	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+
+	// Insert the keys
+	for (int i = 0; i != keys.size(); ++i)
 	{
-		string key = gKeys[i];
-		NodeT *node = gBst.get(key);
+		bst.put(keys[i], i);
+	}
+
+	for (int i = 0; i != keys.size(); ++i)
+	{
+		string key = keys[i];
+		NodeT *node = bst.get(key);
+
+		if (node == nullptr)
+		{
+			pf("get", false);
+		}
 
 		if (debug)
 			cerr << "key: " << node->key() << " val: " << node->val() << endl;
@@ -88,7 +94,7 @@ void testGet()
 		}
 	}
 
-	NodeT *node = gBst.get("W");
+	NodeT *node = bst.get("W");
 	if (node != nullptr)
 	{
 		cerr << "fail: expected nullptr, got " << node;
@@ -129,9 +135,12 @@ void testOpIndex()
 {
 	header("index []");
 
-	for(int i = 0; i != gKeys.size(); ++i) {
-		string key = gKeys[i];
-		NodeT& node = gBst[key];
+	BstT bst;
+	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+
+	for(int i = 0; i != keys.size(); ++i) {
+		string key = keys[i];
+		NodeT& node = bst[key];
 		NodeT::value_type val = node.val();
 		cerr << "[ " << key << " ] = " << node.val() << endl;
 		if (val != i)
@@ -141,14 +150,84 @@ void testOpIndex()
 	}
 	pf("[]", true);
 
-	pf("[unknown]", gBst["unknown"] == NodeT::null());
+	pf("[unknown]", bst["unknown"] == NodeT::null());
+}
+
+void testInitializerListConst()
+{
+	header("const initializer list");
+
+	const BstT bst =
+	{
+			{ "H", 1 },
+			{ "C", 2 },
+			{ "S", 3 },
+			{ "A", 4 },
+			{ "E", 5 },
+			{ "R", 6 },
+			{ "X", 7 },
+			{ "Z", 8 },
+			{ "T", 9 },
+	};
+
+	bst.print();
+
+	const NodeT& nodeE = bst["E"];
+	pf("[]", nodeE.val() == 5);
+
+	pf("size", bst.size() == 9);
+	pf("height", bst.height() == 4);
+}
+
+void testKeys()
+{
+	const initializer_list<pair<KeyT, ValT>> keyList =
+	{
+			{ "H", 1 },
+			{ "C", 2 },
+			{ "S", 3 },
+			{ "A", 4 },
+			{ "E", 5 },
+			{ "R", 6 },
+			{ "X", 7 },
+			{ "Z", 8 },
+			{ "T", 9 },
+	};
+
+	const BstT bst(keyList);
+	vector<KeyT> keys = bst.keys();
+
+	if (!pf("equal size: ", keyList.size() == keys.size() && keys.size() == bst.size()))
+	{
+		return;
+	}
+
+	vector<pair<KeyT, ValT>> expectedKeys(keyList);
+
+	for (auto k : keys)
+	{
+		vector<pair<KeyT, ValT>>::iterator i;
+
+		for (i = expectedKeys.begin(); i != expectedKeys.end(); ++i)
+		{
+			if (i->first == k)
+			{
+				expectedKeys.erase(i);
+				break;
+			}
+		}
+	}
+
+	pf("found all keys", expectedKeys.empty());
 }
 
 void testTree()
 {
-	testPut();
-	testGet();
-	testIsNull();
-	testOpEqual();
-	testOpIndex();
+//	testPut();
+//	testGet();
+//	testIsNull();
+//	testOpEqual();
+//	testOpIndex();
+//	testInitializerListConst();
+	testKeys();
 }

@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <initializer_list>
 #include "Node.h"
 
 using std::string;
@@ -21,6 +22,7 @@ using std::cerr;
 using std::max;
 using std::pair;
 using std::vector;
+using std::initializer_list;
 
 template<typename K, typename V>
 class Bst
@@ -30,11 +32,21 @@ public:
 	typedef typename vector<NodeT>::iterator iterator;
 	typedef typename vector<NodeT>::const_iterator const_iterator;
 	typedef size_t size_type;
-	typedef NodeT value_type;
+	typedef V value_type;
+	typedef K key_type;
 
 	Bst() :
 			mRoot(nullptr)
 	{
+	}
+
+	Bst(initializer_list<pair<K, V>> elems) :
+			Bst()
+	{
+		for (pair<K, V> p : elems)
+		{
+			put(p.first, p.second);
+		}
 	}
 
 	~Bst()
@@ -49,28 +61,36 @@ public:
 		return (node == nullptr) ? NodeT::null() : *node;
 	}
 
+	// TODO: How do I fix this code duplication? A lambda?
+	const NodeT& operator[](K key) const
+	{
+		NodeT *node = get(key);
+
+		return (node == nullptr) ? NodeT::null() : *node;
+	}
+
 	void put(const K key, const V val)
 	{
 		NodeT *node = new NodeT(key, val);
 		mRoot = put(mRoot, node);
 	}
 
-	NodeT *get(const K key)
+	NodeT *get(const K key) const
 	{
 		return get(mRoot, key);
 	}
 
-	size_type size()
+	size_type size() const
 	{
 		return size(mRoot);
 	}
 
-	size_type height()
+	size_type height() const
 	{
 		return height(mRoot);
 	}
 
-	void print()
+	void print() const
 	{
 		cerr << "size: " << size() << endl;
 		cerr << "height: " << height() << endl;
@@ -78,10 +98,28 @@ public:
 		cerr << endl;
 	}
 
-private:
-	static V emptyVal;
+	vector<K> keys() const
+	{
+		vector<K> ks;
 
-	size_type size(NodeT *x)
+		keys(mRoot, ks);
+
+		return ks;
+	}
+
+private:
+	void keys(NodeT *x, vector<K>& ks) const
+	{
+		if (x != nullptr)
+		{
+			ks.push_back(x->mKey);
+
+			keys(x->mLeft, ks);
+			keys(x->mRight, ks);
+		}
+	}
+
+	size_type size(NodeT *x) const
 	{
 		if (x == nullptr)
 		{
@@ -93,7 +131,7 @@ private:
 		}
 	}
 
-	size_type height(NodeT *x)
+	size_type height(NodeT *x) const
 	{
 		if (x == nullptr)
 		{
@@ -103,7 +141,7 @@ private:
 		return max(1 + height(x->mLeft), 1 + height(x->mRight));
 	}
 
-	NodeT *get(NodeT *x, K key)
+	NodeT *get(NodeT *x, K key) const
 	{
 		if (x == nullptr)
 		{
@@ -164,7 +202,7 @@ private:
 		return x;
 	}
 
-	void print(NodeT *x)
+	void print(NodeT *x) const
 	{
 		if (x == nullptr)
 		{
