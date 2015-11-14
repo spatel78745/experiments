@@ -24,9 +24,13 @@ using std::pair;
 using std::vector;
 using std::initializer_list;
 
+void testFloor();
+
 template<typename K, typename V>
 class Bst
 {
+	// TODO: remove after public interface to floor is complete
+	friend void testFloor();
 public:
 	typedef Node<K, V> NodeT;
 	typedef typename vector<NodeT>::iterator iterator;
@@ -56,7 +60,7 @@ public:
 
 	NodeT& operator[](K key)
 	{
-		NodeT *node = get(key);
+		NodeT *node = get(mRoot, key);
 
 		return (node == nullptr) ? NodeT::null() : *node;
 	}
@@ -64,7 +68,7 @@ public:
 	// TODO: How do I fix this code duplication? A lambda?
 	const NodeT& operator[](K key) const
 	{
-		NodeT *node = get(key);
+		NodeT *node = get(mRoot, key);
 
 		return (node == nullptr) ? NodeT::null() : *node;
 	}
@@ -73,11 +77,6 @@ public:
 	{
 		NodeT *node = new NodeT(key, val);
 		mRoot = put(mRoot, node);
-	}
-
-	NodeT *get(const K key) const
-	{
-		return get(mRoot, key);
 	}
 
 	size_type size() const
@@ -107,7 +106,99 @@ public:
 		return ks;
 	}
 
+	NodeT& floor(K key) const
+	{
+	    NodeT *f = floor(mRoot, key);
+	    if (f == nullptr)
+	    {
+	        return NodeT::null();
+	    }
+
+	    return *f;
+	}
+
 private:
+	/*
+	 * Returns the largest key in the tree that's less then the parameter "key"
+	 *
+	 * The naive algorithm is:
+	 * - If the tree is empty, the floor is undefined, therefore return
+	 *   NodeT::null()
+	 * - Make a list of the keys in the tree and sort them ascending order
+	 * - For each key in the list
+	 *   - If the key is bigger than the parameter "key, " then by definition
+	 *     it can't be the floor, so continue.
+	 *   - If the key is less, then return it.
+	 * - If we're here, all the keys were bigger then "key" so return null
+	 *
+	 * By now you should be used to thinking about the floor, so let's proceed
+	 * with the recursive implementation. The basic idea is this:
+	 *
+	 * For any node x:
+	 * - If (x == nullptr) then the floor is undefined, so return nullptr
+	 * - If (x->key > "key") then it can't be the floor. If there is a floor, it
+	 *   must be in the left subtree, so return the floor of the left subtree.
+	 * - If (x->key == "key") then it's the floor, so return it
+	 * - If (x->key < "key") then it might be the floor. However, the right
+	 *   sub-tree contains keys that bigger then x->key. Some of them may
+	 *   also be less then "key", so the floor may be in the right subtree.
+	 *   So compute the floor of the right subtree, and call it FRS. If FRS
+	 *   is null, then the floor must be x->key. If FRS is bigger than x->key
+	 *   then it must be the floor, so return it. Otherwise, the only
+	 *   remaining possibility is that the floor is the x->key.
+	 *
+	 *   Oh my god....
+	 */
+	NodeT *floor(NodeT *x, K key) const
+	{
+		/*
+		 * First, the easy case. If the tree is empty, then the floor is
+		 * undefined, so return nullptr in this case.
+		 */
+		if (x == nullptr)
+		{
+			return nullptr;
+		}
+
+		/*
+		 * The next easiest case (for me to understand) is if x->key is
+		 * larger then key. If this is true, then x->key can't be floor(key)
+		 * because, by definition, floor(key) <= key. If there is a floor(key),
+		 * it must be in the left sub-tree, so return floor(x->left, key)
+		 */
+		if (key < x->key())
+		{
+			return floor(x->mLeft, key);
+		}
+
+		/*
+		 * And now for the trickiest case. If x->key is less then key, it may
+		 * be floor(key). But the right sub-tree contains keys that are larger
+		 * then x->key. Some of them may also be less than key, so the floor
+		 * may be in the right subtree. So:
+		 * - If floor(x->right)
+		 *   - is nullptr, then either the right subtree is empty, or all the
+		 *     keys are larger then key. So the floor must be x->key, so
+		 *     return it.
+		 *   - if larger or equal, then x->key, then it must be the floor, so return
+		 *     floor(x->right).
+		 */
+		NodeT *frs = floor(x->mRight, key);
+
+		if (frs == nullptr)
+		{
+			return x;
+		}
+
+		if (x->key() < frs->key())
+		{
+			return frs;
+		}
+
+		return x;
+	}
+
+
 	void keys(NodeT *x, vector<K>& ks) const
 	{
 		if (x != nullptr)

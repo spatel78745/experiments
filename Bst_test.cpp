@@ -52,57 +52,58 @@ void testPut()
 	pf("height", bst.height() == 4);
 }
 
-void testGet()
-{
-	header("get");
-
-	bool debug = false;
-
-	BstT bst;
-	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
-
-	// Insert the keys
-	for (int i = 0; i != keys.size(); ++i)
-	{
-		bst.put(keys[i], i);
-	}
-
-	for (int i = 0; i != keys.size(); ++i)
-	{
-		string key = keys[i];
-		NodeT *node = bst.get(key);
-
-		if (node == nullptr)
-		{
-			pf("get", false);
-		}
-
-		if (debug)
-			cerr << "key: " << node->key() << " val: " << node->val() << endl;
-		if (node->key() != key)
-		{
-			cerr << "fail: expected key: " << key << ", got key: " << node->val() << endl;
-			pf("get", false);
-			return;
-		}
-
-		if (i != node->val())
-		{
-			cerr << "fail: expected val: " << key << ", got val: " << node->val() << endl;
-			pf("get", false);
-			return;
-		}
-	}
-
-	NodeT *node = bst.get("W");
-	if (node != nullptr)
-	{
-		cerr << "fail: expected nullptr, got " << node;
-		pf("get", false);
-	}
-
-	pf("get", true);
-}
+// TODO: add to index-operator test
+//void testGet()
+//{
+//	header("get");
+//
+//	bool debug = false;
+//
+//	BstT bst;
+//	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+//
+//	// Insert the keys
+//	for (int i = 0; i != keys.size(); ++i)
+//	{
+//		bst.put(keys[i], i);
+//	}
+//
+//	for (int i = 0; i != keys.size(); ++i)
+//	{
+//		string key = keys[i];
+//		NodeT *node = bst.get(key);
+//
+//		if (node == nullptr)
+//		{
+//			pf("get", false);
+//		}
+//
+//		if (debug)
+//			cerr << "key: " << node->key() << " val: " << node->val() << endl;
+//		if (node->key() != key)
+//		{
+//			cerr << "fail: expected key: " << key << ", got key: " << node->val() << endl;
+//			pf("get", false);
+//			return;
+//		}
+//
+//		if (i != node->val())
+//		{
+//			cerr << "fail: expected val: " << key << ", got val: " << node->val() << endl;
+//			pf("get", false);
+//			return;
+//		}
+//	}
+//
+//	NodeT *node = bst.get("W");
+//	if (node != nullptr)
+//	{
+//		cerr << "fail: expected nullptr, got " << node;
+//		pf("get", false);
+//	}
+//
+//	pf("get", true);
+//}
 
 void testNoConstIndex()
 {
@@ -221,6 +222,59 @@ void testKeys()
 	pf("found all keys", expectedKeys.empty());
 }
 
+void testFloor()
+{
+	header("f");
+
+	const BstT bst =
+	{
+			{ "H", 1 },
+			{ "C", 2 },
+			{ "S", 3 },
+			{ "B", 4 },
+			{ "E", 5 },
+			{ "R", 6 },
+			{ "X", 7 },
+			{ "Y", 8 },
+			{ "T", 9 },
+	};
+
+	auto floor = [&bst](KeyT key)
+	{
+	    NodeT *_floor = bst.floor(bst.mRoot, key);
+	    return _floor == nullptr ? "undefined" : _floor->key();
+	};
+
+	/*
+	 * Let's compute the floor of the successor of all the keys. This should exercise
+	 * all the code paths.
+	 *
+	 * 123456789
+	 * HCSAERXYT
+	 * BCEHRSTXY (sorted)
+	 * CDFISTUYZ
+	 * But does it exercise all the code paths? Let's see what floor(U) = T does. This should
+	 * exercise all the code paths because you need to go right and left to get to T.
+	 *
+	 * First we visit H, then because it's less we go to S, then because it's less we go to X,
+	 * then because it's bigger we go to T, then because it's less we go to nullptr and return.
+	 * Thus, at T we are at the "frs == nullptr" case, and so the function returns T.
+	 */
+	// All the keys in the tree are larger than "A" so there is no floor.
+    pf("floor(A) == undefined", floor("A") == "undefined");
+
+    pf("floor(C) == C", floor("C") == "C");
+    pf("floor(D) == C", floor("D") == "C");
+    pf("floor(F) == E", floor("F") == "E");
+    pf("floor(I) == H", floor("I") == "H");
+    pf("floor(S) == S", floor("S") == "S");
+    pf("floor(T) == T", floor("T") == "T");
+    pf("floor(U) == T", floor("U") == "T");
+    pf("floor(Y) == Y", floor("Y") == "Y");
+    pf("floor(Z) == Y", floor("Z") == "Y");
+}
+
+
 void testTree()
 {
 //	testPut();
@@ -229,5 +283,6 @@ void testTree()
 //	testOpEqual();
 //	testOpIndex();
 //	testInitializerListConst();
-	testKeys();
+//	testKeys();
+    testFloor();
 }
