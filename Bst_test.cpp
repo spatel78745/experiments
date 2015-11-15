@@ -136,8 +136,20 @@ void testOpIndex()
 {
 	header("index []");
 
+	const bool debug = true;
+
 	BstT bst;
 	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
+
+    for (int i = 0; i != keys.size(); ++i)
+    {
+        bst.put(keys[i], i);
+    }
+
+	if (debug)
+	{
+	    bst.print();
+	}
 
 	for(int i = 0; i != keys.size(); ++i) {
 		string key = keys[i];
@@ -224,7 +236,7 @@ void testKeys()
 
 void testFloor()
 {
-	header("f");
+	header("testFloor");
 
 	const BstT bst =
 	{
@@ -241,8 +253,8 @@ void testFloor()
 
 	auto floor = [&bst](KeyT key)
 	{
-	    NodeT *_floor = bst.floor(bst.mRoot, key);
-	    return _floor == nullptr ? "undefined" : _floor->key();
+	    NodeT& _floor = bst.floor(key);
+	    return _floor == NodeT::null() ? "undefined" : _floor.key();
 	};
 
 	/*
@@ -274,15 +286,90 @@ void testFloor()
     pf("floor(Z) == Y", floor("Z") == "Y");
 }
 
+template <typename T, typename Func>
+void printCollection(string title, const T& collection, Func field)
+{
+    cerr << title << ":";
+
+    for(auto& elem: collection)
+    {
+        cerr << field(elem) << " ";
+    }
+
+    cerr << endl;
+}
+
+void testInOrder()
+{
+    header("in order");
+
+    bool debug = true;
+
+    const initializer_list<pair<KeyT, ValT>> l =
+    {
+            { "H", 1 },
+            { "C", 2 },
+            { "S", 3 },
+            { "B", 4 },
+            { "E", 5 },
+            { "R", 6 },
+            { "X", 7 },
+            { "Y", 8 },
+            { "T", 9 },
+    };
+
+    const BstT bst(l);
+
+    if (debug)
+    {
+        bst.print();
+    }
+
+    vector<NodeT> nodesInOrder;
+    bst.inOrder(nodesInOrder);
+
+    vector<KeyT> sortedKeys;
+
+    for (pair<KeyT, ValT> p: l)
+    {
+        sortedKeys.push_back(p.first);
+    }
+
+    sort(sortedKeys.begin(), sortedKeys.end());
+
+    if (debug)
+    {
+        cerr << "sorted keys vector size: " << sortedKeys.size() << endl;
+        cerr << "inorder nodes vector size: " << nodesInOrder.size() << endl;
+        printCollection("sorted keys", sortedKeys, [](const KeyT& key) { return key; });
+        printCollection("inorder nodes", nodesInOrder, [](const NodeT& node) { return node.key(); });
+    }
+
+    if (!pf("size match", sortedKeys.size() == nodesInOrder.size()))
+    {
+        return;
+    }
+
+    for (int i = 0; i < sortedKeys.size(); ++i)
+    {
+        if (!pf("order", nodesInOrder[i].key() == sortedKeys[i]))
+        {
+            cerr << nodesInOrder[i].key() << " != " << sortedKeys[i] << endl;
+            return;
+        }
+    }
+}
+
 
 void testTree()
 {
-//	testPut();
-//	testGet();
-//	testIsNull();
-//	testOpEqual();
-//	testOpIndex();
-//	testInitializerListConst();
-//	testKeys();
-    testFloor();
+//    testPut();
+//    testGet();
+//    testIsNull();
+//    testOpEqual();
+//    testOpIndex();
+//    testInitializerListConst();
+//    testKeys();
+//    testFloor();
+    testInOrder();
 }

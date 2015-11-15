@@ -13,6 +13,7 @@
 
 using std::cout;
 using std::endl;
+using std::cerr;
 
 template <typename, typename> class Bst;
 template <typename, typename> class Node;
@@ -30,6 +31,31 @@ public:
 	Node(const K key, const V val) :
 			mKey(key), mVal(val), mSize(1), mLeft(nullptr), mRight(nullptr), mParent(nullptr), mIsNull(false)
 	{
+	}
+
+	/*
+	 * An important note. I puzzled over this for quite a while (not really). Anyway, during
+	 * my inorder traversal, I was pushing nodes into a vector which triggered the default
+	 * copy constructor. During vector expansion, or whatever it was doing, nodes were also
+	 * destructed, causing the entire subtree at that node to be destructed. This lead to a
+	 * segfault. The solution was to make all the pointers null so that the destructor wouldn't
+	 * destroy subtrees. By the way, all this is speculation...I don't know if that was actually
+	 * what was happening. But the problem is fixed for the moment.
+	 *
+	 * TODO: And I consider this a "creative" problem: figure out exactly what was going on. Trace
+	 * through a full example based on a hypothesis of how the vector class works.
+	 *
+	 * And now back to business...
+	 */
+	Node(const Node& node) :
+        mKey(node.mKey), mVal(node.mVal), mSize(node.mSize), mLeft(nullptr), mRight(nullptr), mParent(nullptr), mIsNull(node.mIsNull)
+	{
+	    static bool debug = false;
+
+	    if (debug)
+	    {
+	        cerr << "copy from " << node.mKey << ", " << node.mVal << endl;
+	    }
 	}
 
 	virtual ~Node()

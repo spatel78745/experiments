@@ -24,290 +24,348 @@ using std::pair;
 using std::vector;
 using std::initializer_list;
 
-void testFloor();
+/*
+ * Design notes:
+ * Iterators:
+ * - A simple implementation is to put the nodes into a vector and have begin() and end()
+ *   return the begin() and end() of the vector. Unfortunately, since Bsts are mutable,
+ *   the iterator will be invalidated by if someone puts a new node, uses [] to change a node,
+ *   or deletes (TBD) a node.
+ * - Another issue is how do you know when to delete the vector? An easy fix is for any
+ *   non-const method, update the vector. Repellent yes, but good enough for now.
+ *
+ * Misc issues
+ * - Are any of these methods thread safe? Probably all the const ones are, since const doesn't
+ *   doesn't change any of the members. Prove this. And what about the case where const and
+ *   non-const functions are running concurrently? And now you know the value of immutable
+ *   structures from a "thread-safety" perspective.
+ * - Think about coding conventions:
+ *   - Should member functions have an "m" prefix?
+ */
 
 template<typename K, typename V>
 class Bst
 {
-	// TODO: remove after public interface to floor is complete
-	friend void testFloor();
 public:
-	typedef Node<K, V> NodeT;
-	typedef typename vector<NodeT>::iterator iterator;
-	typedef typename vector<NodeT>::const_iterator const_iterator;
-	typedef size_t size_type;
-	typedef V value_type;
-	typedef K key_type;
+    typedef Node<K, V> NodeT;
+    typedef size_t size_type;
+    typedef V value_type;
+    typedef K key_type;
 
-	Bst() :
-			mRoot(nullptr)
-	{
-	}
+    Bst() :
+            mRoot(nullptr)
+    {
+    }
 
-	Bst(initializer_list<pair<K, V>> elems) :
-			Bst()
-	{
-		for (pair<K, V> p : elems)
-		{
-			put(p.first, p.second);
-		}
-	}
+    Bst(initializer_list<pair<K, V>> elems) :
+            Bst()
+    {
+        for (pair<K, V> p : elems)
+        {
+            put(p.first, p.second);
+        }
+    }
 
-	~Bst()
-	{
-		delete mRoot;
-	}
+    ~Bst()
+    {
+        delete mRoot;
+    }
 
-	NodeT& operator[](K key)
-	{
-		NodeT *node = get(mRoot, key);
+    /*
+     * TODO: Another more serious issue: if the user changes a node, the tree might not be a BST
+     * anymore. Just out of curiosity, how could the user mess it up? There are a couple of
+     * possibilities:
+     * - If the node is the parent of a left child and is made smaller then this child
+     * - If the node is the parent of a right child and is made larger then this child
+     * - If the node is the left child of the parent and it's made larger then the parent
+     * - If the node is the right child of the parent and it's made smaller then the parent
+     *
+     * We could fix this by deleting the node and putting it in.
+     */
+    NodeT& operator[](K key)
+    {
+        NodeT *node = get(mRoot, key);
 
-		return (node == nullptr) ? NodeT::null() : *node;
-	}
+        return (node == nullptr) ? NodeT::null() : *node;
+    }
 
-	// TODO: How do I fix this code duplication? A lambda?
-	const NodeT& operator[](K key) const
-	{
-		NodeT *node = get(mRoot, key);
+    // TODO: How do I fix this code duplication? A lambda?
+    const NodeT& operator[](K key) const
+    {
+        NodeT *node = get(mRoot, key);
 
-		return (node == nullptr) ? NodeT::null() : *node;
-	}
+        return (node == nullptr) ? NodeT::null() : *node;
+    }
 
-	void put(const K key, const V val)
-	{
-		NodeT *node = new NodeT(key, val);
-		mRoot = put(mRoot, node);
-	}
+    void put(const K key, const V val)
+    {
+        NodeT *node = new NodeT(key, val);
+        mRoot = put(mRoot, node);
 
-	size_type size() const
-	{
-		return size(mRoot);
-	}
+    }
 
-	size_type height() const
-	{
-		return height(mRoot);
-	}
+    size_type size() const
+    {
+        return size(mRoot);
+    }
 
-	void print() const
-	{
-		cerr << "size: " << size() << endl;
-		cerr << "height: " << height() << endl;
-		print(mRoot);
-		cerr << endl;
-	}
+    size_type height() const
+    {
+        return height(mRoot);
+    }
 
-	vector<K> keys() const
-	{
-		vector<K> ks;
+    void print() const
+    {
+        cerr << "size: " << size() << endl;
+        cerr << "height: " << height() << endl;
+        print(mRoot);
+        cerr << endl;
+    }
 
-		keys(mRoot, ks);
+    vector<K> keys() const
+    {
+        vector<K> ks;
 
-		return ks;
-	}
+        keys(mRoot, ks);
 
-	NodeT& floor(K key) const
-	{
-	    NodeT *f = floor(mRoot, key);
-	    if (f == nullptr)
-	    {
-	        return NodeT::null();
-	    }
+        return ks;
+    }
 
-	    return *f;
-	}
+    NodeT& floor(K key) const
+    {
+        NodeT *_floor = floor(mRoot, key);
+        if (_floor == nullptr)
+        {
+            return NodeT::null();
+        }
+
+        return *_floor;
+    }
+
+    void inOrder(vector<NodeT>& vec) const
+    {
+        inOrderVec(mRoot, vec);
+    }
 
 private:
-	/*
-	 * Returns the largest key in the tree that's less then the parameter "key"
-	 *
-	 * The naive algorithm is:
-	 * - If the tree is empty, the floor is undefined, therefore return
-	 *   NodeT::null()
-	 * - Make a list of the keys in the tree and sort them ascending order
-	 * - For each key in the list
-	 *   - If the key is bigger than the parameter "key, " then by definition
-	 *     it can't be the floor, so continue.
-	 *   - If the key is less, then return it.
-	 * - If we're here, all the keys were bigger then "key" so return null
-	 *
-	 * By now you should be used to thinking about the floor, so let's proceed
-	 * with the recursive implementation. The basic idea is this:
-	 *
-	 * For any node x:
-	 * - If (x == nullptr) then the floor is undefined, so return nullptr
-	 * - If (x->key > "key") then it can't be the floor. If there is a floor, it
-	 *   must be in the left subtree, so return the floor of the left subtree.
-	 * - If (x->key == "key") then it's the floor, so return it
-	 * - If (x->key < "key") then it might be the floor. However, the right
-	 *   sub-tree contains keys that bigger then x->key. Some of them may
-	 *   also be less then "key", so the floor may be in the right subtree.
-	 *   So compute the floor of the right subtree, and call it FRS. If FRS
-	 *   is null, then the floor must be x->key. If FRS is bigger than x->key
-	 *   then it must be the floor, so return it. Otherwise, the only
-	 *   remaining possibility is that the floor is the x->key.
-	 *
-	 *   Oh my god....
-	 */
-	NodeT *floor(NodeT *x, K key) const
-	{
-		/*
-		 * First, the easy case. If the tree is empty, then the floor is
-		 * undefined, so return nullptr in this case.
-		 */
-		if (x == nullptr)
-		{
-			return nullptr;
-		}
+    void inOrderVec(const NodeT *x, vector<NodeT>& vec) const
+    {
+        static const bool debug = false;
 
-		/*
-		 * The next easiest case (for me to understand) is if x->key is
-		 * larger then key. If this is true, then x->key can't be floor(key)
-		 * because, by definition, floor(key) <= key. If there is a floor(key),
-		 * it must be in the left sub-tree, so return floor(x->left, key)
-		 */
-		if (key < x->key())
-		{
-			return floor(x->mLeft, key);
-		}
+        if (x == nullptr)
+        {
+            return;
+        }
 
-		/*
-		 * And now for the trickiest case. If x->key is less then key, it may
-		 * be floor(key). But the right sub-tree contains keys that are larger
-		 * then x->key. Some of them may also be less than key, so the floor
-		 * may be in the right subtree. So:
-		 * - If floor(x->right)
-		 *   - is nullptr, then either the right subtree is empty, or all the
-		 *     keys are larger then key. So the floor must be x->key, so
-		 *     return it.
-		 *   - if larger or equal, then x->key, then it must be the floor, so return
-		 *     floor(x->right).
-		 */
-		NodeT *frs = floor(x->mRight, key);
+        inOrderVec(x->mLeft, vec);
 
-		if (frs == nullptr)
-		{
-			return x;
-		}
+        if (debug)
+        {
+            cerr << "about to push_back: " << x->key() << ", " << x->val() << endl;
+        }
 
-		if (x->key() < frs->key())
-		{
-			return frs;
-		}
+        vec.push_back(*x);
 
-		return x;
-	}
+        if (debug)
+        {
+            cerr << "push_back complete: " << x->key() << ", " << x->val() << " size " << vec.size() << endl;
+        }
 
+        inOrderVec(x->mRight, vec);
+    }
 
-	void keys(NodeT *x, vector<K>& ks) const
-	{
-		if (x != nullptr)
-		{
-			ks.push_back(x->mKey);
+    /*
+     * Returns the largest key in the tree that's less then the parameter "key"
+     *
+     * The naive algorithm is:
+     * - If the tree is empty, the floor is undefined, therefore return
+     *   NodeT::null()
+     * - Make a list of the keys in the tree and sort them ascending order
+     * - For each key in the list
+     *   - If the key is bigger than the parameter "key, " then by definition
+     *     it can't be the floor, so continue.
+     *   - If the key is less, then return it.
+     * - If we're here, all the keys were bigger then "key" so return null
+     *
+     * By now you should be used to thinking about the floor, so let's proceed
+     * with the recursive implementation. The basic idea is this:
+     *
+     * For any node x:
+     * - If (x == nullptr) then the floor is undefined, so return nullptr
+     * - If (x->key > "key") then it can't be the floor. If there is a floor, it
+     *   must be in the left subtree, so return the floor of the left subtree.
+     * - If (x->key == "key") then it's the floor, so return it
+     * - If (x->key < "key") then it might be the floor. However, the right
+     *   sub-tree contains keys that bigger then x->key. Some of them may
+     *   also be less then "key", so the floor may be in the right subtree.
+     *   So compute the floor of the right subtree, and call it FRS. If FRS
+     *   is null, then the floor must be x->key. If FRS is bigger than x->key
+     *   then it must be the floor, so return it. Otherwise, the only
+     *   remaining possibility is that the floor is the x->key.
+     *
+     *   Oh my god....
+     */
+    NodeT *floor(NodeT *x, K key) const
+    {
+        /*
+         * First, the easy case. If the tree is empty, then the floor is
+         * undefined, so return nullptr in this case.
+         */
+        if (x == nullptr)
+        {
+            return nullptr;
+        }
 
-			keys(x->mLeft, ks);
-			keys(x->mRight, ks);
-		}
-	}
+        /*
+         * The next easiest case (for me to understand) is if x->key is
+         * larger then key. If this is true, then x->key can't be floor(key)
+         * because, by definition, floor(key) <= key. If there is a floor(key),
+         * it must be in the left sub-tree, so return floor(x->left, key)
+         */
+        if (key < x->key())
+        {
+            return floor(x->mLeft, key);
+        }
 
-	size_type size(NodeT *x) const
-	{
-		if (x == nullptr)
-		{
-			return 0;
-		}
-		else
-		{
-			return x->mSize;
-		}
-	}
+        /*
+         * And now for the trickiest case. If x->key is less then key, it may
+         * be floor(key). But the right sub-tree contains keys that are larger
+         * then x->key. Some of them may also be less than key, so the floor
+         * may be in the right subtree. So:
+         * - If floor(x->right)
+         *   - is nullptr, then either the right subtree is empty, or all the
+         *     keys are larger then key. So the floor must be x->key, so
+         *     return it.
+         *   - if larger or equal, then x->key, then it must be the floor, so return
+         *     floor(x->right).
+         */
+        NodeT *frs = floor(x->mRight, key);
 
-	size_type height(NodeT *x) const
-	{
-		if (x == nullptr)
-		{
-			return 0;
-		}
+        if (frs == nullptr)
+        {
+            return x;
+        }
 
-		return max(1 + height(x->mLeft), 1 + height(x->mRight));
-	}
+        if (x->key() < frs->key())
+        {
+            return frs;
+        }
 
-	NodeT *get(NodeT *x, K key) const
-	{
-		if (x == nullptr)
-		{
-			return nullptr;
-		}
+        return x;
+    }
 
-		if (key < x->mKey)
-		{
-			return get(x->mLeft, key);
-		}
+    void keys(NodeT *x, vector<K>& ks) const
+    {
+        if (x != nullptr)
+        {
+            ks.push_back(x->mKey);
 
-		if (x->mKey < key)
-		{
-			return get(x->mRight, key);
-		}
+            keys(x->mLeft, ks);
+            keys(x->mRight, ks);
+        }
+    }
 
-		return x;
+    size_type size(NodeT *x) const
+    {
+        if (x == nullptr)
+        {
+            return 0;
+        }
+        else
+        {
+            return x->mSize;
+        }
+    }
 
-	}
+    size_type height(NodeT *x) const
+    {
+        if (x == nullptr)
+        {
+            return 0;
+        }
 
-	NodeT *put(NodeT *x, NodeT *node)
-	{
-		bool debug = false;
+        return max(1 + height(x->mLeft), 1 + height(x->mRight));
+    }
 
-		std::string parentKey = ((x == nullptr || x->mParent == nullptr) ? "null" : x->mParent->mKey);
+    NodeT *get(NodeT *x, K key) const
+    {
+        if (x == nullptr)
+        {
+            return nullptr;
+        }
 
-		if (x == nullptr)
-		{
-			if (debug)
-				std::cerr << "Inserting " << node->mKey << " " << parentKey << "\n";
+        if (key < x->mKey)
+        {
+            return get(x->mLeft, key);
+        }
 
-			return node;
-		}
+        if (x->mKey < key)
+        {
+            return get(x->mRight, key);
+        }
 
-		if (*node < *x)
-		{
-			if (debug)
-				std::cerr << "Going left from " << x->mKey << " to insert " << node->mKey << " parent " << parentKey << "\n";
-			x->mLeft = put(x->mLeft, node);
-			x->mLeft->mParent = x;
-		}
-		else if (*x < *node)
-		{
-			if (debug)
-				std::cerr << "Going right from " << x->mKey << " to insert " << node->mKey << " parent " << parentKey << "\n";
-			x->mRight = put(x->mRight, node);
-			x->mRight->mParent = x;
-		}
-		else
-		{
-			if (debug)
-				std::cout << "Replacing value in " << node->mKey << "\n";
-			x->mVal = node->mVal;
-		}
+        return x;
 
-		x->mSize = size(x->mRight) + size(x->mLeft) + 1;
+    }
 
-		return x;
-	}
+    NodeT *put(NodeT *x, NodeT *node)
+    {
+        bool debug = false;
 
-	void print(NodeT *x) const
-	{
-		if (x == nullptr)
-		{
-			return;
-		}
+        std::string parentKey =
+                ((x == nullptr || x->mParent == nullptr) ? "null" : x->mParent->mKey);
 
-		string parentKey = ((x->mParent == nullptr) ? "null" : x->mParent->mKey);
+        if (x == nullptr)
+        {
+            if (debug)
+                std::cerr << "Inserting " << node->mKey << " " << parentKey << "\n";
 
-		cerr << x->mKey << "/" << parentKey << "/" << size(x) << " ";
-		print(x->mLeft);
-		print(x->mRight);
-	}
+            return node;
+        }
 
-	NodeT *mRoot;
+        if (*node < *x)
+        {
+            if (debug)
+                std::cerr << "Going left from " << x->mKey << " to insert " << node->mKey
+                        << " parent " << parentKey << "\n";
+            x->mLeft = put(x->mLeft, node);
+            x->mLeft->mParent = x;
+        }
+        else if (*x < *node)
+        {
+            if (debug)
+                std::cerr << "Going right from " << x->mKey << " to insert " << node->mKey
+                        << " parent " << parentKey << "\n";
+            x->mRight = put(x->mRight, node);
+            x->mRight->mParent = x;
+        }
+        else
+        {
+            if (debug)
+                std::cout << "Replacing value in " << node->mKey << "\n";
+            x->mVal = node->mVal;
+        }
+
+        x->mSize = size(x->mRight) + size(x->mLeft) + 1;
+
+        return x;
+    }
+
+    void print(NodeT *x) const
+    {
+        if (x == nullptr)
+        {
+            return;
+        }
+
+        string parentKey = ((x->mParent == nullptr) ? "null" : x->mParent->mKey);
+
+        cerr << x->mKey << "/" << parentKey << "/" << size(x) << " ";
+        print(x->mLeft);
+        print(x->mRight);
+    }
+
+    NodeT *mRoot;
 };
 
 #endif /* BST_H_ */
