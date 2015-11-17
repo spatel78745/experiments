@@ -14,6 +14,7 @@
 using std::cout;
 using std::endl;
 using std::cerr;
+using std::pair;
 
 template <typename, typename> class Bst;
 template <typename, typename> class Node;
@@ -27,6 +28,7 @@ public:
 	friend bool operator==<K, V>(const Node<K, V>& lhs, const Node<K, V>& rhs);
 
 	typedef V value_type;
+	typedef pair<K, V> pairT;
 
 	Node(const K key, const V val) :
 			mKey(key), mVal(val), mSize(1), mLeft(nullptr), mRight(nullptr), mParent(nullptr), mIsNull(false)
@@ -87,6 +89,11 @@ public:
 		return *this;
 	}
 
+	pairT pair()
+	{
+	    return pairT(mKey, mVal);
+	}
+
 	static Node& null()
 	{
 		static Node nullNode(true);
@@ -95,7 +102,7 @@ public:
 	}
 
 private:
-	Node(bool isNull) : mIsNull(isNull) {}
+	Node(bool isNull) : mLeft(nullptr), mRight(nullptr), mParent(nullptr), mIsNull(isNull) {}
 	K mKey;
 	V mVal;
 	typename K::size_type mSize;

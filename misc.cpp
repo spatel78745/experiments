@@ -10,12 +10,9 @@
 #include <thread>
 #include <vector>
 #include "Bst.h"
+#include "FileBuffer.h"
 
-using std::vector;
-using std::cout;
-using std::endl;
-using std::string;
-using std::cerr;
+using namespace std;
 
 class BoolFunc
 {
@@ -182,13 +179,28 @@ template <typename T> T f4(T, T);
 typedef char CType;
 template <typename Ctype> Ctype f5(Ctype a);
 
-
-
 int main()
 {
 	extern void testTree();
 
-	testTree();
+	FILE *fp = fopen("/Users/spatel78745/tmp/testFile", "r+");
+	if (fp == NULL)
+	{
+	    cerr << "Failed to open file" << endl;
+	}
+
+	FileBuffer fileBuf(fp, 10);
+
+	istream fbs(&fileBuf);
+
+	int n;
+	fbs >> n;
+    cout << "n = " << n << endl;
+    fbs >> n;
+    cout << "n = " << n << endl;
+    fbs >> n;
+    cout << "n = " << n << endl;
+
 
 //	Node<string, int> nodeH("H", 1);
 //	Node<string, int> nodeA("A", 1);

@@ -9,6 +9,7 @@
 #include <vector>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include "Bst.h"
 #include "Node.h"
 
@@ -19,19 +20,29 @@ typedef Bst<string, int> BstT;
 typedef BstT::NodeT NodeT;
 typedef BstT::key_type KeyT;
 typedef BstT::value_type ValT;
+typedef pair<KeyT, ValT> PairT;
 
-void header(string s)
+static void header(string s)
 {
 	static string border("============");
 	cerr << border << " " << s << " " << border << endl;
 }
 
-bool pf(string test, bool result)
+static bool pf(string test, bool result)
 {
 	string pass_fail(result ? "pass" : "fail");
 	cerr << test << ": " << pass_fail << endl;
 
 	return result;
+}
+
+template <typename T>
+static void print(string title, T listOfPairs, bool printKey = true)
+{
+
+    cerr << title << ": ";
+    for(PairT& p: listOfPairs)
+        cerr << (printKey ? p.first : to_string(p.second));
 }
 
 void testPut()
@@ -153,7 +164,7 @@ void testOpIndex()
 
 	for(int i = 0; i != keys.size(); ++i) {
 		string key = keys[i];
-		NodeT& node = bst[key];
+		const NodeT& node = bst[key];
 		NodeT::value_type val = node.val();
 		cerr << "[ " << key << " ] = " << node.val() << endl;
 		if (val != i)
@@ -286,6 +297,9 @@ void testFloor()
     pf("floor(Z) == Y", floor("Z") == "Y");
 }
 
+/*
+ * TODO: Make this printPair.
+ */
 template <typename T, typename Func>
 void printCollection(string title, const T& collection, Func field)
 {
@@ -299,13 +313,21 @@ void printCollection(string title, const T& collection, Func field)
     cerr << endl;
 }
 
+/*
+ * Things I learned:
+ * - The compiler goes crazy and spits out a huge number of error messages if you try to sort
+ *   a const collection...I had "const vector<PairT> initialValues.
+ * - vector has an "operator==()" (and other relational operators), so you can compaire two
+ *   vectors. pair's "operator==" does "operator==" on both first and second. All of this is
+ *   most convenient.
+ */
 void testInOrder()
 {
     header("in order");
 
     bool debug = true;
 
-    const initializer_list<pair<KeyT, ValT>> l =
+    vector<PairT> initialValues =
     {
             { "H", 1 },
             { "C", 2 },
@@ -318,58 +340,213 @@ void testInOrder()
             { "T", 9 },
     };
 
-    const BstT bst(l);
+    const BstT bst(initialValues);
 
     if (debug)
     {
         bst.print();
     }
 
-    vector<NodeT> nodesInOrder;
+    vector<PairT> nodesInOrder;
     bst.inOrder(nodesInOrder);
 
-    vector<KeyT> sortedKeys;
-
-    for (pair<KeyT, ValT> p: l)
-    {
-        sortedKeys.push_back(p.first);
-    }
-
-    sort(sortedKeys.begin(), sortedKeys.end());
+    sort(initialValues.begin(), initialValues.end(),
+            [](const PairT& a, const PairT& b) { return a.first < b.first; });
 
     if (debug)
     {
-        cerr << "sorted keys vector size: " << sortedKeys.size() << endl;
+        auto printFirst = [](const PairT& p) { return p.first; };
         cerr << "inorder nodes vector size: " << nodesInOrder.size() << endl;
-        printCollection("sorted keys", sortedKeys, [](const KeyT& key) { return key; });
-        printCollection("inorder nodes", nodesInOrder, [](const NodeT& node) { return node.key(); });
+        cerr << "sorted init values vector size: " << initialValues.size() << endl;
+        printCollection("sorted keys", initialValues, printFirst);
+        printCollection("inorder nodes", nodesInOrder, printFirst);
     }
 
-    if (!pf("size match", sortedKeys.size() == nodesInOrder.size()))
+    pf("sorted initial values == nodes in order", initialValues == nodesInOrder);
+
+}
+
+vector<KeyT> keysFromInitializerList(initializer_list<pair<KeyT, ValT>> list)
+{
+    vector<KeyT> ret;
+
+    for(auto& p: list)
+    {
+        ret.push_back(p.first);
+    }
+
+    return ret;
+}
+
+void testIterator()
+{
+    bool debug = true;
+
+    const initializer_list<pair<KeyT, ValT>> l =
+    {
+        { "H", 1 },
+        { "C", 2 },
+        { "S", 3 },
+        { "B", 4 },
+        { "E", 5 },
+        { "R", 6 },
+        { "X", 7 },
+        { "Y", 8 },
+        { "T", 9 },
+    };
+
+    const BstT bst(l);
+
+    BstT::const_iterator b = bst.begin(), e = bst.end();
+
+    if (debug)
+    {
+        bst.print();
+        cerr << "end() - begin(): " << e - b << endl;
+        cerr << "number of initializer pairs: " << l.size() << endl;
+        cerr << "bst.size(): " << bst.size() << endl;
+    }
+
+    // Probably overkill on the conditions, but WTF.
+    if (!pf("match size", ((e - b) == bst.size()) && (bst.size() == l.size())))
     {
         return;
     }
 
-    for (int i = 0; i < sortedKeys.size(); ++i)
+    for(auto& p: l)
     {
-        if (!pf("order", nodesInOrder[i].key() == sortedKeys[i]))
+        if (find_if(b, e, [&p](const NodeT& n) { return n.key() == p.first; } ) == e)
         {
-            cerr << nodesInOrder[i].key() << " != " << sortedKeys[i] << endl;
+            pf(p.first + " not found", false);
             return;
         }
     }
+
+    pf ("all keys found", true);
 }
 
+template <typename A, typename B>
+string pairStr(pair<A, B> p)
+{
+    stringstream ss;
+    ss << "(" << p.first << ", " << p.second << ")";
+
+    return ss.str();
+}
+
+void testIsTree()
+{
+    vector<PairT> initVec =
+    {
+        { "H", 1 },
+        { "C", 2 },
+        { "S", 3 },
+        { "B", 4 },
+        { "E", 5 },
+        { "R", 6 },
+        { "X", 7 },
+        { "Y", 8 },
+        { "T", 9 },
+    };
+
+    BstT bst(initVec);
+
+    pf("unmodified is a BST?", bst.isTree());
+
+    bst["X"] = NodeT("Z", 26);
+    bst.print();
+
+    pf ("modified is a BST?", bst.isTree());
+}
+
+
+/*
+ * Things I learned:
+ * - initializer_list can't be sorted
+ * - for you're testing for equality by doing '==' on each field, consider using a type with an
+ *   'operator=' that does this
+ *
+ * Design notes:
+ * - After deleteMin() runs:
+ *   - If run on an empty tree, it should throw an exception
+ *   - There should be one less node in the tree
+ *   - The minimum node shouldn't be in the tree
+ *   - The tree should still be a BST
+ */
+void testDeleteMin()
+{
+    header("delete minimum");
+
+    typedef typename vector<PairT>::iterator iter;
+    BstT emptyBst;
+
+    try { emptyBst.deleteMin(); }
+    catch(out_of_range& e)
+    {
+        pf(string("exception: ") + e.what(), true);
+    }
+
+    vector<PairT> initVec =
+    {
+        { "H", 1 },
+        { "C", 2 },
+        { "S", 3 },
+        { "B", 4 },
+        { "E", 5 },
+        { "R", 6 },
+        { "X", 7 },
+        { "Y", 8 },
+        { "T", 9 },
+    };
+
+    BstT bst(initVec);
+
+    sort(initVec.begin(), initVec.end(), [](const PairT& a, const PairT&b) { return a < b; } );
+
+    print("initial keys", initVec); cerr << endl;
+
+    for(iter i = initVec.begin(); i != initVec.end(); ++i)
+    {
+        PairT& expectedMin = *i;
+        BstT::size_type sizeBeforeDel = bst.size();
+
+        pair<KeyT, ValT> deletedMin = bst.deleteMin();
+
+        pf("deletedMin " + pairStr(deletedMin) + " == expectedMin " + pairStr(expectedMin),
+                deletedMin == expectedMin);
+
+        // Was it actually deleted?
+        pf("size decremented: size before = " + to_string(sizeBeforeDel) + " size after = " +
+                to_string(bst.size()), sizeBeforeDel == (1 + bst.size()));
+        pf("element deleted?", bst[expectedMin.first] == NodeT::null());
+
+        /*
+         * Is it still a BST?
+         * - The keys from (i + 1) to end() should match the keys in an inorder traversal of the
+         *   tree.
+         */
+        pf("still a BST?", bst.isTree());
+    }
+
+    // Are all the nodes deleted?
+    pf("empty?", bst.size() == 0);
+
+    cerr << endl;
+
+    pf("size is 0", bst.size() == 0);
+}
 
 void testTree()
 {
 //    testPut();
-//    testGet();
 //    testIsNull();
 //    testOpEqual();
 //    testOpIndex();
 //    testInitializerListConst();
 //    testKeys();
 //    testFloor();
-    testInOrder();
+//    testInOrder();
+//    testIterator();
+//    testIsTree();
+    testDeleteMin();
 }

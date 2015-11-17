@@ -14,6 +14,8 @@
 #include <utility>
 #include <vector>
 #include <initializer_list>
+#include <functional>
+#include <stdexcept>
 #include "Node.h"
 
 using std::string;
@@ -23,6 +25,8 @@ using std::max;
 using std::pair;
 using std::vector;
 using std::initializer_list;
+using std::function;
+using std::out_of_range;
 
 /*
  * Design notes:
@@ -41,7 +45,39 @@ using std::initializer_list;
  *   structures from a "thread-safety" perspective.
  * - Think about coding conventions:
  *   - Should member functions have an "m" prefix?
+ *
+ * Deletion
+ * - In English, here's what I want to do:
+ *   - Let's say x is the node that I want to delete. There are 3 cases:
+ *     - x has a single child:
+ *       1. a left child
+ *       2. a right child
+ *     - x has two children
+ *
+ *     Design an if-statement to cover these three cases:
+ *     x has one child:
+ *     // x has one child
+ *     if (x.left == null) return x.right // 1. a right child
+ *     if (x.right == null) return x.left // 2. a left child
+ *     // x has two children
+ *
+ *     Perhaps you're over thinking this...but Sedgewick/Wayne have come up with a construction
+ *     that you've never used.
+ *
+ *     Now, can we say that the successor of all the nodes in x.right are bigger than succ(x)?
+ *     Well, we know that all the nodes in x.right are bigger than x, that there are no other
+ *     nodes between x and succ(x) i.e. we have x, succ(x), and all the rest, so all the rest
+ *     have to be bigger than succ(x). Now let's set t = x, and x = succ(x). If we set x.right
+ *     = deleteMin(t), then all nodes x.right are bigger then x. And we can set x.left to be
+ *     t.left because succ(x) must be bigger then t.left. TODO: please refine this argument.
+ *
+ *     And now we cooking with gas. Some tips to reduce mental load:
+ *     - don't keep too many things at once. Once you've proved a bunch of facts, accept it
+ *       and prove more. Stay focused on the point of proof.
  */
+
+// TODO: make a util.(cpp|h)
+template <typename A, typename B> string pairStr(pair<A, B> p);
 
 template<typename K, typename V>
 class Bst
@@ -51,24 +87,119 @@ public:
     typedef size_t size_type;
     typedef V value_type;
     typedef K key_type;
+    typedef typename vector<NodeT>::iterator iterator;
+    typedef typename vector<NodeT>::const_iterator const_iterator;
+    typedef pair<K, V> PairT;
 
     Bst() :
             mRoot(nullptr)
     {
     }
 
-    Bst(initializer_list<pair<K, V>> elems) :
+    Bst(const vector<PairT> elems) : Bst()
+    {
+        put(elems);
+    }
+
+    Bst(initializer_list<PairT> elems) :
             Bst()
     {
-        for (pair<K, V> p : elems)
-        {
-            put(p.first, p.second);
-        }
+        put(elems);
     }
 
     ~Bst()
     {
         delete mRoot;
+    }
+
+
+    bool isTree()
+    {
+        bool debug = true;
+        function<bool (NodeT *)> _isTree = [&_isTree, debug](NodeT *x)
+        {
+            if (x == nullptr) return true;
+
+            if (x->mLeft  != nullptr && x->key() < x->mLeft->key())
+            {
+               if (debug)
+               cerr << "tree property 'left < root' violated : " << pairStr(x->pair()) <<
+                       " < " << pairStr(x->pair()) << endl;
+               return false;
+            }
+            if (x->mRight != nullptr && x->mRight->key() < x->key())
+            {
+               if (debug)
+               cerr << "tree property 'root < right' violated : " << pairStr(x->mRight->pair()) <<
+                       " < " << pairStr(x->pair()) << endl;
+
+               return false;
+            }
+
+           return _isTree(x->mLeft) && _isTree(x->mRight);
+        };
+
+        return _isTree(mRoot);
+    }
+
+    PairT deleteMin()
+    {
+        PairT deleted;
+        bool debug = false;
+
+        function<NodeT* (NodeT *)> _deleteMin = [&_deleteMin, &deleted, &debug](NodeT *x)
+        {
+            if (x->mLeft == nullptr)
+            {
+                deleted.first = x->mKey;
+                deleted.second = x->mVal;
+
+                cerr << "deleteMin(): deleted (" << deleted.first << ", " << deleted.second << ")" << endl;
+                return x->mRight;
+            }
+
+            x->mLeft = _deleteMin(x->mLeft);
+
+            return x;
+        };
+
+        if (mRoot == nullptr)
+        {
+            throw out_of_range("tree is empty");
+        }
+
+        /*
+         * Big bug caught by the test: the result wasn't assigned to mRoot. If the minimum element
+         * is the root, then _deleteMin returns the right subtree, but mRoot wasn't updated.
+         */
+        mRoot = _deleteMin(mRoot);
+
+        return deleted;
+    }
+
+    iterator begin()
+    {
+        return mIterVec.begin();
+    }
+
+    /*
+     * NB: If this isn't a const member, then the compiler complains that it conflicts with
+     * the non-const version because you can't overload functions based on return-type.
+     *
+     */
+    const_iterator begin() const
+    {
+        return mIterVec.begin();
+    }
+
+    iterator end()
+    {
+        return mIterVec.end();
+    }
+
+    const_iterator end() const
+    {
+        return mIterVec.end();
     }
 
     /*
@@ -81,6 +212,8 @@ public:
      * - If the node is the right child of the parent and it's made smaller then the parent
      *
      * We could fix this by deleting the node and putting it in.
+     *
+     * Disable it for now...re-enabled because I can use it to test isTree.
      */
     NodeT& operator[](K key)
     {
@@ -89,12 +222,24 @@ public:
         return (node == nullptr) ? NodeT::null() : *node;
     }
 
-    // TODO: How do I fix this code duplication? A lambda?
+    /*
+     * TODO: How do I fix this code duplication? A lambda?
+     * Another idea here is to hide NodeT from client code and return pairT
+     */
     const NodeT& operator[](K key) const
     {
         NodeT *node = get(mRoot, key);
 
         return (node == nullptr) ? NodeT::null() : *node;
+    }
+
+    template <typename T>
+    void put(T elems)
+    {
+        for (pair<K, V> p : elems)
+        {
+            put(p.first, p.second);
+        }
     }
 
     void put(const K key, const V val)
@@ -142,13 +287,33 @@ public:
         return *_floor;
     }
 
-    void inOrder(vector<NodeT>& vec) const
+    void inOrder(vector<PairT>& res) const
     {
-        inOrderVec(mRoot, vec);
+        inOrder(mRoot, res);
+    }
+
+    PairT min()
+    {
+        if (mRoot == nullptr)
+        {
+            throw out_of_range("tree is empty");
+        }
+
+        return minNode(mRoot)->pair();
     }
 
 private:
-    void inOrderVec(const NodeT *x, vector<NodeT>& vec) const
+    NodeT *minNode(const NodeT *x) const
+    {
+        if (x->mLeft == nullptr)
+        {
+            return x;
+        }
+
+        return minNode(x->mLeft);
+    }
+
+    void inOrder(const NodeT *x, vector<PairT>& res) const
     {
         static const bool debug = false;
 
@@ -157,21 +322,21 @@ private:
             return;
         }
 
-        inOrderVec(x->mLeft, vec);
+        inOrder(x->mLeft, res);
 
         if (debug)
         {
             cerr << "about to push_back: " << x->key() << ", " << x->val() << endl;
         }
 
-        vec.push_back(*x);
+        res.push_back(PairT(x->key(), x->val()));
 
         if (debug)
         {
-            cerr << "push_back complete: " << x->key() << ", " << x->val() << " size " << vec.size() << endl;
+            cerr << "push_back complete: " << x->key() << ", " << x->val() << " size " << res.size() << endl;
         }
 
-        inOrderVec(x->mRight, vec);
+        inOrder(x->mRight, res);
     }
 
     /*
@@ -305,7 +470,6 @@ private:
         }
 
         return x;
-
     }
 
     NodeT *put(NodeT *x, NodeT *node)
@@ -365,7 +529,13 @@ private:
         print(x->mRight);
     }
 
+    /*
+     * The root of the BST
+     */
     NodeT *mRoot;
+
+    vector<NodeT> mIterVec;
+
 };
 
 #endif /* BST_H_ */
