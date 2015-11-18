@@ -184,6 +184,7 @@ int main()
 	extern void testTree();
 	extern void testNullFilterBuf();
 	extern void testCharArrayBuffer();
+	extern void testCapsBuffer();
 
-	testCharArrayBuffer();
+	testCapsBuffer();
 }

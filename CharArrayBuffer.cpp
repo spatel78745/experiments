@@ -63,6 +63,11 @@ CharArrayBuffer::int_type CharArrayBuffer::underflow()
      *   obviously converts the char_type to an int_type
      */
     if (debug) cerr << "underflow: returning " << *mCurrent << endl;
+
+    /*
+     * You need to do "to_int_type" to deal with -ve chars e.g. 0xFF is converted to -1 which is
+     * EOF.
+     */
     return traits_type::to_int_type(*mCurrent);
 }
 

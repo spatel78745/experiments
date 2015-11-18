@@ -8,6 +8,7 @@
 #include <streambuf>
 #include <sstream>
 #include "CharArrayBuffer.h"
+#include "CapsBuffer.h"
 
 using namespace std;
 
@@ -103,6 +104,7 @@ void testCharArrayBuffer()
 {
     CharArrayBuffer sb("hello 20 3.14 world");
     istream is(&sb);
+    if (!is) cerr << "Error on istream\n"; return;
 
     string hello, world;
     int twenty;
@@ -120,5 +122,26 @@ void testCharArrayBuffer()
     else    cerr << "At EOF\n";
 
     cerr << "Exit testCharArrayBuffer" << endl;
+}
 
+void testCapsBuffer()
+{
+    string line;
+    CapsBuffer cb(cout, 20);
+    ostream os(&cb);
+
+    for(;;)
+    {
+        string text;
+
+        cerr << "Enter some text:" << endl;
+        getline(cin, text);
+        if (text.find("stop") != string::npos)
+        {
+            cerr << "Stopping..." << endl;
+            break;
+        }
+        cerr << "You entered: " << text << endl;
+        os << text;
+    }
 }
