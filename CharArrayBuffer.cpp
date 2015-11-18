@@ -5,10 +5,13 @@
  *      Author: spatel78745
  */
 
-#include "CharArrayBuffer.h"
 #include <functional>
 #include <cassert>
 #include <cstring>
+#include <iostream>
+#include <cstdlib>
+#include <cstdio>
+#include "CharArrayBuffer.h"
 
 using namespace std;
 
@@ -38,14 +41,19 @@ CharArrayBuffer::CharArrayBuffer(const char *begin, const char *end):
 
 CharArrayBuffer::CharArrayBuffer(const char *str):
         mBegin(str),
-        mEnd(mBegin + strlen(str))
+        mEnd(mBegin + strlen(str)),
+        mCurrent(mBegin)
 {
+    if (debug) fprintf(stderr, "mBegin = %p, mEnd = %p, *mBegin = %s", mBegin, mEnd, mBegin);
 }
 
 CharArrayBuffer::int_type CharArrayBuffer::underflow()
 {
     if (mCurrent == mEnd)
+    {
+        if (debug) cerr << "underflow: mCurrent == mEnd: returning EOF" << endl;
         return traits_type::eof();
+    }
 
     /*
      * Now what is this "to_int_type"?
@@ -54,11 +62,12 @@ CharArrayBuffer::int_type CharArrayBuffer::underflow()
      * - static constexpr int_type to_int_type(char_type c) no except // whew!!
      *   obviously converts the char_type to an int_type
      */
+    if (debug) cerr << "underflow: returning " << *mCurrent << endl;
     return traits_type::to_int_type(*mCurrent);
 }
 
 /*
- * The default implementatin does this:
+ * The default implementation does this:
  * int uflow()
  * {
  *   if (underflow() == EOF) return EOF;
@@ -76,8 +85,12 @@ CharArrayBuffer::int_type CharArrayBuffer::underflow()
 CharArrayBuffer::int_type CharArrayBuffer::uflow()
 {
     if (mCurrent == mEnd)
+    {
+        if (debug) cerr << "uflow: mCurrent == mEnd: returning EOF" << endl;
         return traits_type::eof();
+    }
 
+    if (debug) cerr << "uflow: returning " << *mCurrent << endl;
     return traits_type::to_int_type(*mCurrent++);
 }
 

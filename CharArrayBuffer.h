@@ -29,7 +29,7 @@ using namespace std;
  *
  * Streambuf example: reading from an array of bytes in memory.
  */
-class CharArrayBuffer : streambuf
+class CharArrayBuffer : public streambuf
 {
 public:
     CharArrayBuffer(const char *begin, const char *end);
@@ -68,6 +68,7 @@ private:
     const char * const mBegin;
     const char * const mEnd;
     const char * mCurrent;
+    bool debug = false;
 };
 
 #endif /* CHARARRAYBUFFER_H_ */

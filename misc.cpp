@@ -182,63 +182,8 @@ template <typename Ctype> Ctype f5(Ctype a);
 int main()
 {
 	extern void testTree();
+	extern void testNullFilterBuf();
+	extern void testCharArrayBuffer();
 
-	FILE *fp = fopen("/Users/spatel78745/tmp/testFile", "r+");
-	if (fp == NULL)
-	{
-	    cerr << "Failed to open file" << endl;
-	}
-
-	FileBuffer fileBuf(fp, 10);
-
-	istream fbs(&fileBuf);
-
-	int n;
-	fbs >> n;
-    cout << "n = " << n << endl;
-    fbs >> n;
-    cout << "n = " << n << endl;
-    fbs >> n;
-    cout << "n = " << n << endl;
-
-
-//	Node<string, int> nodeH("H", 1);
-//	Node<string, int> nodeA("A", 1);
-//
-//	cout << "nodeH: " << nodeH.key() << endl;
-//	cout << "nodeA: " << nodeA.key() << endl;
-//
-//	cout << "nodeH < nodeA: " << (nodeH < nodeA) << endl;
-//	cout << "nodeA < nodeH: " << (nodeA < nodeH) << endl;
-
-
-//	int a[3];
-//
-//	compare(&a, &a);
-
-//	cout << compare(0, 1) << endl;
-//	cout << compares("function", "function") << endl;
-//	cout << compare("started", "finished") << endl;
-
-//	NoCopy nc;
-//	testNoCopy(nc);
-
-//	vector<int> v { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-//	vector<int> q;
-//
-//	cout << top(v) << endl;
-//	cout << top(q) << endl;
-//	tfind(v, 3);
-//	tfind(v, 69);
-//
-//	double d[]{1.1, 2.2, 3.4, 4.4, 5.5};
-//	int i[]{10, 11, 12, 13, 14, 15, 16, 17};
-//
-//	print(d);
-//	print(i);
-//
-//	cout << "array d has " << array_size(d) << " elements" << endl;
-//	cout << "array i has " << array_size(i) << " elements" << endl;
-
-//	testQueueThread();
+	testCharArrayBuffer();
 }
