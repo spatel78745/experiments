@@ -9,6 +9,10 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include <ctype.h>
+#include <cstdlib>
+#include <cstdio>
+#include <unistd.h>
 #include "Bst.h"
 #include "FileBuffer.h"
 
@@ -178,6 +182,24 @@ template <typename T> T foo(T, unsigned int*);
 template <typename T> T f4(T, T);
 typedef char CType;
 template <typename Ctype> Ctype f5(Ctype a);
+
+void testPipe()
+{
+    int mypipe[2];
+    if (pipe(mypipe))
+    {
+        cerr << "Failed to create pipe" << endl;
+        return;
+    }
+
+    pid_t pid = fork();
+    // TODO: should this be <static_cast>?
+    if (pid == (pid_t)0)
+    {
+        close(mypipe[1]);
+    }
+
+}
 
 int main()
 {
