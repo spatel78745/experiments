@@ -25,11 +25,6 @@ static void *getInAddr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-/*
- * Creates a TCP socket
- * - hostname: the hostname of the server
- * - port    : the server port
- */
 TcpSocket::TcpSocket(const string& hostname, int port) :
     mHostname(hostname), mPort(port), mSockFd(-1)
 {
@@ -92,13 +87,6 @@ bool TcpSocket::connect()
     return true;
 }
 
-/*
- * Reads a line from the socket and returns it
- *
- * line - the line of text read from the socket
- *
- * Returns true if successful, false if failed
- */
 bool TcpSocket::readLine(string& line)
 {
     int c;
@@ -116,9 +104,6 @@ bool TcpSocket::readLine(string& line)
     return c == '\n';
 }
 
-/*
- * Writes a line to the socket
- */
 bool TcpSocket::writeLine(const string& line)
 {
     // Error if the socket isn't connected
@@ -144,14 +129,8 @@ bool TcpSocket::writeLine(const string& line)
     return true;
 }
 
-/*
- * Destructor
- */
 TcpSocket::~TcpSocket() { close(); }
 
-/*
- * Closes the socket
- */
 void TcpSocket::close()
 {
     if (mSockFd == -1) return;

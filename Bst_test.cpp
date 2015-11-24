@@ -12,6 +12,7 @@
 #include <algorithm>
 #include "Bst.h"
 #include "Node.h"
+#include "TestUtil.h"
 
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
@@ -21,20 +22,6 @@ typedef BstT::NodeT NodeT;
 typedef BstT::key_type KeyT;
 typedef BstT::value_type ValT;
 typedef pair<KeyT, ValT> PairT;
-
-static void header(string s)
-{
-	static string border("============");
-	cerr << border << " " << s << " " << border << endl;
-}
-
-static bool pf(string test, bool result)
-{
-	string pass_fail(result ? "pass" : "fail");
-	cerr << test << ": " << pass_fail << endl;
-
-	return result;
-}
 
 template <typename T>
 static void print(string title, T listOfPairs, bool printKey = true)
