@@ -14,21 +14,32 @@ using namespace std;
 
 class TcpSocket
 {
+public:
     TcpSocket(const string& hostname, int port);
 
-    void connect();
+    bool connect();
 
-    void readLine(const string& buf);
+    bool readLine(string& line);
 
-    void writeLine(const string& buf);
+    bool writeLine(const string& line);
 
     void close();
 
     virtual ~TcpSocket();
 
 private:
+    int getChar();
+    /*
+     * Forbid assignment and copying
+     */
+    TcpSocket(const TcpSocket &);
+    TcpSocket& operator=(const TcpSocket &);
+
+private:
     const string mHostname;
     const int mPort;
+    // -1 if socket isn't connected
+    int mSockFd;
 };
 
 #endif /* TCPSOCKET_H_ */
