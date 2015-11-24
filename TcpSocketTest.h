@@ -19,7 +19,7 @@ public:
 
     void testIo();
 
-    virtual void runAll();
+    void runAll() override;
 
 private:
     static const char * mBadHost;

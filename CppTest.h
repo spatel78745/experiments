@@ -14,6 +14,8 @@
 class CppTest
 {
 public:
+    bool assert(const char *test, bool result);
+
     bool assert(std::string test, bool result);
 
     int count() { return mCount; }

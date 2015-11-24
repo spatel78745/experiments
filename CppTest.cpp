@@ -19,7 +19,7 @@ void CppTest::header(string s)
     cerr << border << " " << s << " " << border << endl;
 }
 
-bool CppTest::assert(string test, bool result)
+bool CppTest::assert(const char *test, bool result)
 {
     const char *pass_fail;
     if (result)
@@ -38,4 +38,9 @@ bool CppTest::assert(string test, bool result)
     cerr << test << ": " << pass_fail << endl;
 
     return result;
+}
+
+bool CppTest::assert(std::string test, bool result)
+{
+    return assert(test.c_str(), result);
 }
