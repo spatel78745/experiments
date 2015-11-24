@@ -29,7 +29,6 @@ public:
      */
     bool connect();
 
-
     /*
      * Reads a line from the socket
      * - &line (out): The line. Doesn't contain the delimiting '\n'.
@@ -45,7 +44,7 @@ public:
      *
      * Precond: Socket must be connected
      *
-     * - &line(in): The line
+     * - &line(in): The line. Must end in '\n'.
      */
     bool writeLine(const string& line);
 

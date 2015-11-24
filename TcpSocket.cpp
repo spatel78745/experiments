@@ -91,6 +91,7 @@ bool TcpSocket::readLine(string& line)
 {
     int c;
 
+    cerr << "In read " << endl;
     if (mSockFd == -1)
     {
         cerr << "Error: socket not connected\n";
@@ -98,8 +99,10 @@ bool TcpSocket::readLine(string& line)
     }
 
     line.clear();
-    while((c = getChar() > 0) && (c != '\n'))
-        line.push_back(string::traits_type::to_int_type(c));
+    while((c = getChar()) > 0 && c != '\n')
+        line.push_back(string::traits_type::to_char_type(c));
+
+    cerr << "Exit loop" << endl;
 
     return c == '\n';
 }
@@ -151,6 +154,7 @@ int TcpSocket::getChar()
     ssize_t n;
 
     n = recv(mSockFd, &c, 1, 0);
+//    fprintf(stderr, "(n = %ld, c = %c, c = %d, nl = %d)\n", n, c, string::traits_type::to_int_type(c), '\n');
 
     if (n == -1)
     {
@@ -166,4 +170,3 @@ int TcpSocket::getChar()
 
     return string::traits_type::to_int_type(c);
 }
-
