@@ -91,7 +91,6 @@ bool TcpSocket::readLine(string& line)
 {
     int c;
 
-    cerr << "In read " << endl;
     if (mSockFd == -1)
     {
         cerr << "Error: socket not connected\n";
@@ -101,8 +100,6 @@ bool TcpSocket::readLine(string& line)
     line.clear();
     while((c = getChar()) > 0 && c != '\n')
         line.push_back(string::traits_type::to_char_type(c));
-
-    cerr << "Exit loop" << endl;
 
     return c == '\n';
 }
@@ -162,9 +159,10 @@ int TcpSocket::getChar()
         return -1;
     }
 
-    if (n < 0)
+    if (n == 0)
     {
-        cerr << "Connection closed\n";
+        cerr << "Warn: Connection closed\n";
+        mSockFd = -1;
         return 0;
     }
 

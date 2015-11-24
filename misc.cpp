@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include "Bst.h"
 #include "FileBuffer.h"
-#include "TcpSocket_test.h"
+#include "TcpSocketTest.h"
 
 using namespace std;
 
@@ -209,5 +209,7 @@ int main()
 	extern void testCharArrayBuffer();
 	extern void testCapsBuffer();
 
-	runTcpTests();
+	TcpSocketTest tcpSocketTest;
+
+	tcpSocketTest.runAll();
 }

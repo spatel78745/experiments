@@ -11,8 +11,16 @@
 #include <sstream>
 #include <algorithm>
 #include "Bst.h"
+
+#include "CppTest.h"
 #include "Node.h"
-#include "TestUtil.h"
+
+class BstTest : public CppTest
+{
+    void runAll() {}
+};
+
+BstTest T;
 
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
@@ -34,7 +42,7 @@ static void print(string title, T listOfPairs, bool printKey = true)
 
 void testPut()
 {
-	header("put");
+	T.header("put");
 
 	BstT bst;
 	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
@@ -46,8 +54,8 @@ void testPut()
 
 	bst.print();
 
-	pf("size", bst.size() == keys.size());
-	pf("height", bst.height() == 4);
+	T.assert("size", bst.size() == keys.size());
+	T.assert("height", bst.height() == 4);
 }
 
 // TODO: add to index-operator test
@@ -73,7 +81,7 @@ void testPut()
 //
 //		if (node == nullptr)
 //		{
-//			pf("get", false);
+//			T.assert("get", false);
 //		}
 //
 //		if (debug)
@@ -81,14 +89,14 @@ void testPut()
 //		if (node->key() != key)
 //		{
 //			cerr << "fail: expected key: " << key << ", got key: " << node->val() << endl;
-//			pf("get", false);
+//			T.assert("get", false);
 //			return;
 //		}
 //
 //		if (i != node->val())
 //		{
 //			cerr << "fail: expected val: " << key << ", got val: " << node->val() << endl;
-//			pf("get", false);
+//			T.assert("get", false);
 //			return;
 //		}
 //	}
@@ -97,10 +105,10 @@ void testPut()
 //	if (node != nullptr)
 //	{
 //		cerr << "fail: expected nullptr, got " << node;
-//		pf("get", false);
+//		T.assert("get", false);
 //	}
 //
-//	pf("get", true);
+//	T.assert("get", true);
 //}
 
 void testNoConstIndex()
@@ -111,11 +119,11 @@ void testIsNull()
 {
 	NodeT a("a", 'a');
 
-	header("null");
+	T.header("null");
 
 
-	pf("null == null", NodeT::null() == NodeT::null());
-	pf("null == a", !(NodeT::null() == a));
+	T.assert("null == null", NodeT::null() == NodeT::null());
+	T.assert("null == a", !(NodeT::null() == a));
 }
 
 void testOpEqual()
@@ -124,15 +132,15 @@ void testOpEqual()
 	NodeT a2("a", 'a');
 	NodeT b("b", 'b');
 
-	header("equal ==");
+	T.header("equal ==");
 
-	pf("a1 == a2", a1 == a2);
-	pf("a1 == b", !(a1 == b));
+	T.assert("a1 == a2", a1 == a2);
+	T.assert("a1 == b", !(a1 == b));
 }
 
 void testOpIndex()
 {
-	header("index []");
+	T.header("index []");
 
 	const bool debug = true;
 
@@ -156,17 +164,17 @@ void testOpIndex()
 		cerr << "[ " << key << " ] = " << node.val() << endl;
 		if (val != i)
 		{
-			pf("[]", false);
+			T.assert("[]", false);
 		}
 	}
-	pf("[]", true);
+	T.assert("[]", true);
 
-	pf("[unknown]", bst["unknown"] == NodeT::null());
+	T.assert("[unknown]", bst["unknown"] == NodeT::null());
 }
 
 void testInitializerListConst()
 {
-	header("const initializer list");
+	T.header("const initializer list");
 
 	const BstT bst =
 	{
@@ -184,10 +192,10 @@ void testInitializerListConst()
 	bst.print();
 
 	const NodeT& nodeE = bst["E"];
-	pf("[]", nodeE.val() == 5);
+	T.assert("[]", nodeE.val() == 5);
 
-	pf("size", bst.size() == 9);
-	pf("height", bst.height() == 4);
+	T.assert("size", bst.size() == 9);
+	T.assert("height", bst.height() == 4);
 }
 
 void testKeys()
@@ -208,7 +216,7 @@ void testKeys()
 	const BstT bst(keyList);
 	vector<KeyT> keys = bst.keys();
 
-	if (!pf("equal size: ", keyList.size() == keys.size() && keys.size() == bst.size()))
+	if (!T.assert("equal size: ", keyList.size() == keys.size() && keys.size() == bst.size()))
 	{
 		return;
 	}
@@ -229,12 +237,12 @@ void testKeys()
 		}
 	}
 
-	pf("found all keys", expectedKeys.empty());
+	T.assert("found all keys", expectedKeys.empty());
 }
 
 void testFloor()
 {
-	header("testFloor");
+	T.header("testFloor");
 
 	const BstT bst =
 	{
@@ -271,17 +279,17 @@ void testFloor()
 	 * Thus, at T we are at the "frs == nullptr" case, and so the function returns T.
 	 */
 	// All the keys in the tree are larger than "A" so there is no floor.
-    pf("floor(A) == undefined", floor("A") == "undefined");
+    T.assert("floor(A) == undefined", floor("A") == "undefined");
 
-    pf("floor(C) == C", floor("C") == "C");
-    pf("floor(D) == C", floor("D") == "C");
-    pf("floor(F) == E", floor("F") == "E");
-    pf("floor(I) == H", floor("I") == "H");
-    pf("floor(S) == S", floor("S") == "S");
-    pf("floor(T) == T", floor("T") == "T");
-    pf("floor(U) == T", floor("U") == "T");
-    pf("floor(Y) == Y", floor("Y") == "Y");
-    pf("floor(Z) == Y", floor("Z") == "Y");
+    T.assert("floor(C) == C", floor("C") == "C");
+    T.assert("floor(D) == C", floor("D") == "C");
+    T.assert("floor(F) == E", floor("F") == "E");
+    T.assert("floor(I) == H", floor("I") == "H");
+    T.assert("floor(S) == S", floor("S") == "S");
+    T.assert("floor(T) == T", floor("T") == "T");
+    T.assert("floor(U) == T", floor("U") == "T");
+    T.assert("floor(Y) == Y", floor("Y") == "Y");
+    T.assert("floor(Z) == Y", floor("Z") == "Y");
 }
 
 /*
@@ -310,7 +318,7 @@ void printCollection(string title, const T& collection, Func field)
  */
 void testInOrder()
 {
-    header("in order");
+    T.header("in order");
 
     bool debug = true;
 
@@ -349,7 +357,7 @@ void testInOrder()
         printCollection("inorder nodes", nodesInOrder, printFirst);
     }
 
-    pf("sorted initial values == nodes in order", initialValues == nodesInOrder);
+    T.assert("sorted initial values == nodes in order", initialValues == nodesInOrder);
 
 }
 
@@ -395,7 +403,7 @@ void testIterator()
     }
 
     // Probably overkill on the conditions, but WTF.
-    if (!pf("match size", ((e - b) == bst.size()) && (bst.size() == l.size())))
+    if (!T.assert("match size", ((e - b) == bst.size()) && (bst.size() == l.size())))
     {
         return;
     }
@@ -404,12 +412,12 @@ void testIterator()
     {
         if (find_if(b, e, [&p](const NodeT& n) { return n.key() == p.first; } ) == e)
         {
-            pf(p.first + " not found", false);
+            T.assert(p.first + " not found", false);
             return;
         }
     }
 
-    pf ("all keys found", true);
+    T.assert("all keys found", true);
 }
 
 template <typename A, typename B>
@@ -438,12 +446,12 @@ void testIsTree()
 
     BstT bst(initVec);
 
-    pf("unmodified is a BST?", bst.isTree());
+    T.assert("unmodified is a BST?", bst.isTree());
 
     bst["X"] = NodeT("Z", 26);
     bst.print();
 
-    pf ("modified is a BST?", bst.isTree());
+    T.assert("modified is a BST?", bst.isTree());
 }
 
 
@@ -462,7 +470,7 @@ void testIsTree()
  */
 void testDeleteMin()
 {
-    header("delete minimum");
+    T.header("delete minimum");
 
     typedef typename vector<PairT>::iterator iter;
     BstT emptyBst;
@@ -470,7 +478,7 @@ void testDeleteMin()
     try { emptyBst.deleteMin(); }
     catch(out_of_range& e)
     {
-        pf(string("exception: ") + e.what(), true);
+        T.assert(string("exception: ") + e.what(), true);
     }
 
     vector<PairT> initVec =
@@ -499,28 +507,28 @@ void testDeleteMin()
 
         pair<KeyT, ValT> deletedMin = bst.deleteMin();
 
-        pf("deletedMin " + pairStr(deletedMin) + " == expectedMin " + pairStr(expectedMin),
+        T.assert("deletedMin " + pairStr(deletedMin) + " == expectedMin " + pairStr(expectedMin),
                 deletedMin == expectedMin);
 
         // Was it actually deleted?
-        pf("size decremented: size before = " + to_string(sizeBeforeDel) + " size after = " +
+        T.assert("size decremented: size before = " + to_string(sizeBeforeDel) + " size after = " +
                 to_string(bst.size()), sizeBeforeDel == (1 + bst.size()));
-        pf("element deleted?", bst[expectedMin.first] == NodeT::null());
+        T.assert("element deleted?", bst[expectedMin.first] == NodeT::null());
 
         /*
          * Is it still a BST?
          * - The keys from (i + 1) to end() should match the keys in an inorder traversal of the
          *   tree.
          */
-        pf("still a BST?", bst.isTree());
+        T.assert("still a BST?", bst.isTree());
     }
 
     // Are all the nodes deleted?
-    pf("empty?", bst.size() == 0);
+    T.assert("empty?", bst.size() == 0);
 
     cerr << endl;
 
-    pf("size is 0", bst.size() == 0);
+    T.assert("size is 0", bst.size() == 0);
 }
 
 void testTree()

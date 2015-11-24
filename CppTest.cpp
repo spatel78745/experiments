@@ -5,22 +5,36 @@
  *      Author: spatel78745
  */
 
+#include "CppTest.h"
+
 #include <string>
 #include <iostream>
-#include "TestUtil.h"
 
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
 
-void header(string s)
+void CppTest::header(string s)
 {
     static string border("============");
     cerr << border << " " << s << " " << border << endl;
 }
 
-bool pf(string test, bool result)
+bool CppTest::assert(string test, bool result)
 {
-    string pass_fail(result ? "pass" : "fail");
+    const char *pass_fail;
+    if (result)
+    {
+        pass_fail = "pass";
+        mPass++;
+    }
+    else
+    {
+        pass_fail = "fail";
+        mFail++;
+    }
+
+    mCount++;
+
     cerr << test << ": " << pass_fail << endl;
 
     return result;
