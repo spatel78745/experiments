@@ -205,9 +205,8 @@ void testPipe()
 
 int main()
 {
-    BstTest bstTest;
-
-    bstTest.runAll();
-//	TcpSocketTest tcpSocketTest;
-//	tcpSocketTest.runAll();
+//    BstTest bstTest;
+//    bstTest.runAll();
+	TcpSocketTest tcpSocketTest;
+	tcpSocketTest.runAll();
 }
