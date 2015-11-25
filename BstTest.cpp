@@ -11,16 +11,8 @@
 #include <sstream>
 #include <algorithm>
 #include "Bst.h"
-
-#include "CppTest.h"
 #include "Node.h"
-
-class BstTest : public CppTest
-{
-    void runAll() {}
-};
-
-BstTest T;
+#include "BstTest.h"
 
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
@@ -32,7 +24,7 @@ typedef BstT::value_type ValT;
 typedef pair<KeyT, ValT> PairT;
 
 template <typename T>
-static void print(string title, T listOfPairs, bool printKey = true)
+void print(string title, T listOfPairs, bool printKey = true)
 {
 
     cerr << title << ": ";
@@ -40,9 +32,9 @@ static void print(string title, T listOfPairs, bool printKey = true)
         cerr << (printKey ? p.first : to_string(p.second));
 }
 
-void testPut()
+void BstTest::testPut()
 {
-	T.header("put");
+	header("put");
 
 	BstT bst;
 	vector<KeyT> keys = { "H", "C", "S", "A", "E", "R", "X", "Z", "T" };
@@ -54,8 +46,8 @@ void testPut()
 
 	bst.print();
 
-	T.assert("size", bst.size() == keys.size());
-	T.assert("height", bst.height() == 4);
+	assert("size", bst.size() == keys.size());
+	assert("height", bst.height() == 4);
 }
 
 // TODO: add to index-operator test
@@ -81,7 +73,7 @@ void testPut()
 //
 //		if (node == nullptr)
 //		{
-//			T.assert("get", false);
+//			assert("get", false);
 //		}
 //
 //		if (debug)
@@ -89,14 +81,14 @@ void testPut()
 //		if (node->key() != key)
 //		{
 //			cerr << "fail: expected key: " << key << ", got key: " << node->val() << endl;
-//			T.assert("get", false);
+//			assert("get", false);
 //			return;
 //		}
 //
 //		if (i != node->val())
 //		{
 //			cerr << "fail: expected val: " << key << ", got val: " << node->val() << endl;
-//			T.assert("get", false);
+//			assert("get", false);
 //			return;
 //		}
 //	}
@@ -105,42 +97,38 @@ void testPut()
 //	if (node != nullptr)
 //	{
 //		cerr << "fail: expected nullptr, got " << node;
-//		T.assert("get", false);
+//		assert("get", false);
 //	}
 //
-//	T.assert("get", true);
+//	assert("get", true);
 //}
 
-void testNoConstIndex()
-{
-}
-
-void testIsNull()
+void BstTest::testIsNull()
 {
 	NodeT a("a", 'a');
 
-	T.header("null");
+	header("null");
 
 
-	T.assert("null == null", NodeT::null() == NodeT::null());
-	T.assert("null == a", !(NodeT::null() == a));
+	assert("null == null", NodeT::null() == NodeT::null());
+	assert("null == a", !(NodeT::null() == a));
 }
 
-void testOpEqual()
+void BstTest::testOpEqual()
 {
 	NodeT a1("a", 'a');
 	NodeT a2("a", 'a');
 	NodeT b("b", 'b');
 
-	T.header("equal ==");
+	header("equal ==");
 
-	T.assert("a1 == a2", a1 == a2);
-	T.assert("a1 == b", !(a1 == b));
+	assert("a1 == a2", a1 == a2);
+	assert("a1 == b", !(a1 == b));
 }
 
-void testOpIndex()
+void BstTest::testOpIndex()
 {
-	T.header("index []");
+	header("index []");
 
 	const bool debug = true;
 
@@ -164,17 +152,17 @@ void testOpIndex()
 		cerr << "[ " << key << " ] = " << node.val() << endl;
 		if (val != i)
 		{
-			T.assert("[]", false);
+			assert("[]", false);
 		}
 	}
-	T.assert("[]", true);
+	assert("[]", true);
 
-	T.assert("[unknown]", bst["unknown"] == NodeT::null());
+	assert("[unknown]", bst["unknown"] == NodeT::null());
 }
 
-void testInitializerListConst()
+void BstTest::testInitializerListConst()
 {
-	T.header("const initializer list");
+	header("const initializer list");
 
 	const BstT bst =
 	{
@@ -192,13 +180,13 @@ void testInitializerListConst()
 	bst.print();
 
 	const NodeT& nodeE = bst["E"];
-	T.assert("[]", nodeE.val() == 5);
+	assert("[]", nodeE.val() == 5);
 
-	T.assert("size", bst.size() == 9);
-	T.assert("height", bst.height() == 4);
+	assert("size", bst.size() == 9);
+	assert("height", bst.height() == 4);
 }
 
-void testKeys()
+void BstTest::testKeys()
 {
 	const initializer_list<pair<KeyT, ValT>> keyList =
 	{
@@ -216,7 +204,7 @@ void testKeys()
 	const BstT bst(keyList);
 	vector<KeyT> keys = bst.keys();
 
-	if (!T.assert("equal size: ", keyList.size() == keys.size() && keys.size() == bst.size()))
+	if (!assert("equal size: ", keyList.size() == keys.size() && keys.size() == bst.size()))
 	{
 		return;
 	}
@@ -237,12 +225,12 @@ void testKeys()
 		}
 	}
 
-	T.assert("found all keys", expectedKeys.empty());
+	assert("found all keys", expectedKeys.empty());
 }
 
-void testFloor()
+void BstTest::testFloor()
 {
-	T.header("testFloor");
+	header("testFloor");
 
 	const BstT bst =
 	{
@@ -279,17 +267,17 @@ void testFloor()
 	 * Thus, at T we are at the "frs == nullptr" case, and so the function returns T.
 	 */
 	// All the keys in the tree are larger than "A" so there is no floor.
-    T.assert("floor(A) == undefined", floor("A") == "undefined");
+    assert("floor(A) == undefined", floor("A") == "undefined");
 
-    T.assert("floor(C) == C", floor("C") == "C");
-    T.assert("floor(D) == C", floor("D") == "C");
-    T.assert("floor(F) == E", floor("F") == "E");
-    T.assert("floor(I) == H", floor("I") == "H");
-    T.assert("floor(S) == S", floor("S") == "S");
-    T.assert("floor(T) == T", floor("T") == "T");
-    T.assert("floor(U) == T", floor("U") == "T");
-    T.assert("floor(Y) == Y", floor("Y") == "Y");
-    T.assert("floor(Z) == Y", floor("Z") == "Y");
+    assert("floor(C) == C", floor("C") == "C");
+    assert("floor(D) == C", floor("D") == "C");
+    assert("floor(F) == E", floor("F") == "E");
+    assert("floor(I) == H", floor("I") == "H");
+    assert("floor(S) == S", floor("S") == "S");
+    assert("floor(T) == T", floor("T") == "T");
+    assert("floor(U) == T", floor("U") == "T");
+    assert("floor(Y) == Y", floor("Y") == "Y");
+    assert("floor(Z) == Y", floor("Z") == "Y");
 }
 
 /*
@@ -316,9 +304,9 @@ void printCollection(string title, const T& collection, Func field)
  *   vectors. pair's "operator==" does "operator==" on both first and second. All of this is
  *   most convenient.
  */
-void testInOrder()
+void BstTest::testInOrder()
 {
-    T.header("in order");
+    header("in order");
 
     bool debug = true;
 
@@ -357,7 +345,7 @@ void testInOrder()
         printCollection("inorder nodes", nodesInOrder, printFirst);
     }
 
-    T.assert("sorted initial values == nodes in order", initialValues == nodesInOrder);
+    assert("sorted initial values == nodes in order", initialValues == nodesInOrder);
 
 }
 
@@ -373,7 +361,7 @@ vector<KeyT> keysFromInitializerList(initializer_list<pair<KeyT, ValT>> list)
     return ret;
 }
 
-void testIterator()
+void BstTest::testIterator()
 {
     bool debug = true;
 
@@ -403,7 +391,7 @@ void testIterator()
     }
 
     // Probably overkill on the conditions, but WTF.
-    if (!T.assert("match size", ((e - b) == bst.size()) && (bst.size() == l.size())))
+    if (!assert("match size", ((e - b) == bst.size()) && (bst.size() == l.size())))
     {
         return;
     }
@@ -412,12 +400,12 @@ void testIterator()
     {
         if (find_if(b, e, [&p](const NodeT& n) { return n.key() == p.first; } ) == e)
         {
-            T.assert(p.first + " not found", false);
+            assert(p.first + " not found", false);
             return;
         }
     }
 
-    T.assert("all keys found", true);
+    assert("all keys found", true);
 }
 
 template <typename A, typename B>
@@ -429,7 +417,7 @@ string pairStr(pair<A, B> p)
     return ss.str();
 }
 
-void testIsTree()
+void BstTest::testIsTree()
 {
     vector<PairT> initVec =
     {
@@ -446,12 +434,12 @@ void testIsTree()
 
     BstT bst(initVec);
 
-    T.assert("unmodified is a BST?", bst.isTree());
+    assert("unmodified is a BST?", bst.isTree());
 
     bst["X"] = NodeT("Z", 26);
     bst.print();
 
-    T.assert("modified is a BST?", bst.isTree());
+    assert("modified is a BST?", bst.isTree());
 }
 
 
@@ -468,9 +456,9 @@ void testIsTree()
  *   - The minimum node shouldn't be in the tree
  *   - The tree should still be a BST
  */
-void testDeleteMin()
+void BstTest::testDeleteMin()
 {
-    T.header("delete minimum");
+    header("delete minimum");
 
     typedef typename vector<PairT>::iterator iter;
     BstT emptyBst;
@@ -478,7 +466,7 @@ void testDeleteMin()
     try { emptyBst.deleteMin(); }
     catch(out_of_range& e)
     {
-        T.assert(string("exception: ") + e.what(), true);
+        assert(string("exception: ") + e.what(), true);
     }
 
     vector<PairT> initVec =
@@ -507,31 +495,53 @@ void testDeleteMin()
 
         pair<KeyT, ValT> deletedMin = bst.deleteMin();
 
-        T.assert("deletedMin " + pairStr(deletedMin) + " == expectedMin " + pairStr(expectedMin),
+        assert("deletedMin " + pairStr(deletedMin) + " == expectedMin " + pairStr(expectedMin),
                 deletedMin == expectedMin);
 
         // Was it actually deleted?
-        T.assert("size decremented: size before = " + to_string(sizeBeforeDel) + " size after = " +
+        assert("size decremented: size before = " + to_string(sizeBeforeDel) + " size after = " +
                 to_string(bst.size()), sizeBeforeDel == (1 + bst.size()));
-        T.assert("element deleted?", bst[expectedMin.first] == NodeT::null());
+        assert("element deleted?", bst[expectedMin.first] == NodeT::null());
 
         /*
          * Is it still a BST?
          * - The keys from (i + 1) to end() should match the keys in an inorder traversal of the
          *   tree.
          */
-        T.assert("still a BST?", bst.isTree());
+        assert("still a BST?", bst.isTree());
     }
 
     // Are all the nodes deleted?
-    T.assert("empty?", bst.size() == 0);
+    assert("empty?", bst.size() == 0);
 
     cerr << endl;
 
-    T.assert("size is 0", bst.size() == 0);
+    assert("size is 0", bst.size() == 0);
 }
 
-void testTree()
+void BstTest::testDraw()
+{
+    header("testDraw");
+
+    const BstT bst =
+    {
+        { "H", 1 },
+        { "C", 2 },
+        { "S", 3 },
+        { "B", 4 },
+        { "E", 5 },
+        { "R", 6 },
+        { "X", 7 },
+        { "Y", 8 },
+        { "T", 9 },
+    };
+
+    bst.draw();
+
+    assert("stub", true);
+}
+
+void BstTest::runAll()
 {
 //    testPut();
 //    testIsNull();
@@ -543,5 +553,8 @@ void testTree()
 //    testInOrder();
 //    testIterator();
 //    testIsTree();
-    testDeleteMin();
+//    testDeleteMin();
+    testDraw();
+
+    CppTest::runAll();
 }

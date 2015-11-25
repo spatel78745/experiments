@@ -44,3 +44,9 @@ bool CppTest::assert(std::string test, bool result)
 {
     return assert(test.c_str(), result);
 }
+
+void CppTest::runAll()
+{
+    fprintf(stderr, "Summary: count = %d, pass = %d, fail = %d, score = %.1f %%", count(), pass(),
+            fail(), score());
+}

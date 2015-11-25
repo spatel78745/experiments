@@ -16,6 +16,7 @@
 #include "Bst.h"
 #include "FileBuffer.h"
 #include "TcpSocketTest.h"
+#include "BstTest.h"
 
 using namespace std;
 
@@ -204,12 +205,9 @@ void testPipe()
 
 int main()
 {
-	extern void testTree();
-	extern void testNullFilterBuf();
-	extern void testCharArrayBuffer();
-	extern void testCapsBuffer();
+    BstTest bstTest;
 
-	TcpSocketTest tcpSocketTest;
-
-	tcpSocketTest.runAll();
+    bstTest.runAll();
+//	TcpSocketTest tcpSocketTest;
+//	tcpSocketTest.runAll();
 }

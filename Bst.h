@@ -112,6 +112,46 @@ public:
         delete mRoot;
     }
 
+    void draw(const NodeT *x, int colStart, int colEnd, int row) const
+    {
+        // Stubs
+        function<bool (int, int)> drawLeftLeg = [](int row, int col)
+        {
+            fprintf(stderr, "drawLeftLeg(%d, %d)\n", row, col);
+            return true;
+        };
+
+        function<bool (int, int)> drawRightLeg = [](int row, int col)
+        {
+            fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
+            return true;
+        };
+
+        function<bool (int, int, const NodeT*)> drawNode = [](int row, int col, const NodeT *x)
+        {
+            fprintf(stderr, "drawNode(%d, %d, %s)\n", row, col, x->mKey.c_str());
+            return true;
+        };
+
+        if (x == nullptr) return;
+
+        int col = (colStart + colEnd) / 2; // TODO: Fix stupid overflow bug if you want
+        drawNode(row, col, x);
+
+        if (x->mLeft != nullptr)
+        {
+            drawLeftLeg(row, col);
+            draw(x->mLeft, colStart, col, row + 1);
+        }
+
+        if (x->mRight != nullptr)
+        {
+            drawRightLeg(row, col);
+            draw(x->mRight, colEnd, col, row + 1);
+        }
+    }
+
+    void draw() const { draw(mRoot, 0, 100, 0); }
 
     bool isTree()
     {

@@ -28,7 +28,9 @@ public:
 
     static void header(std::string s);
 
-    virtual void runAll() = 0;
+    virtual void runAll();
+
+    virtual ~CppTest() {};
 
 private:
     int mCount = 0;
