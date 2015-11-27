@@ -17,7 +17,7 @@
 #include <functional>
 #include <stdexcept>
 #include "Node.h"
-#include "TreePlot.h"
+#include "treeplot/TreePlot.h"
 
 using std::string;
 using std::cout;
@@ -154,7 +154,7 @@ public:
 
     void draw() const
     {
-        TreePlot treePlot(height());
+        TreePlot treePlot;
         draw(mRoot, 0, treePlot.cols(), 0, treePlot);
     }
 
