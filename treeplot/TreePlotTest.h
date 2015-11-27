@@ -1,16 +1,16 @@
 /*
- * TestTreePlotImpl.h
+ * TreePlotTest.h
  *
  *  Created on: Nov 27, 2015
  *      Author: spatel78745
  */
 
-#ifndef TESTTREEPLOT_H_
-#define TESTTREEPLOT_H_
+#ifndef TREEPLOTTEST_H_
+#define TREEPLOTTEST_H_
 
 #include "CppTest.h"
 
-class TestTreePlot : public CppTest
+class TreePlotTest: public CppTest
 {
 public:
     void testCopy();
@@ -18,4 +18,4 @@ public:
     void runAll() override;
 };
 
-#endif /* TESTTREEPLOT_H_ */
+#endif /* TREEPLOTTEST_H_ */

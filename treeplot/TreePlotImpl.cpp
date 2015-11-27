@@ -5,6 +5,6 @@
  *      Author: spatel78745
  */
 
-#include "treeplot/TestTreePlot.h"
+#include <treeplot/TreePlotTest.h>
 #include "TreePlot.h"
 

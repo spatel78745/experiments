@@ -20,14 +20,14 @@ public:
      * - hostname: The hostname of the server
      * - port    : The server port
      */
-    TcpSocket(const string& hostname, int port);
+    TcpSocket(const string& hostname, int port) noexcept;
 
     /*
      * Connects this socket
      *
      * Returns true if successful, false if failed.
      */
-    bool connect();
+    void connect();
 
     /*
      * Reads a line from the socket
@@ -37,7 +37,7 @@ public:
      *
      * Returns true if successful, false if failed
      */
-    bool readLine(string& line);
+    void readLine(string& line);
 
     /*
      * Writes a line to the socket
@@ -46,29 +46,29 @@ public:
      *
      * - &line(in): The line. Must end in '\n'.
      */
-    bool writeLine(const string& line);
+    void writeLine(const string& line) const;
 
     /*
      * Closes (and disconnects) the socket
      */
-    void close();
+    void close() noexcept;
 
     /*
      * Returns the hostname
      */
-    string hostname() { return mHostname; }
+    string hostname() const noexcept { return mHostname; }
 
     /*
      * Returns the port
      */
-    int port() { return mPort; }
+    int port() const noexcept { return mPort; }
 
     /*
      * Returns true if connected
      */
-    bool isConnected() { return mSockFd != -1; }
+    bool isConnected() const noexcept { return mSockFd != -1; }
 
-    virtual ~TcpSocket();
+    virtual ~TcpSocket() noexcept;
 
 private:
     int getChar();

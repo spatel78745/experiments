@@ -24,7 +24,9 @@ public:
 
     int fail()  { return mFail; }
 
-    double score() { return static_cast<double>(mPass) / mCount * 10 / 10 * 100; }
+    double score()
+    {
+        return mCount > 0 ? static_cast<double>(mPass) / mCount * 10 / 10 * 100 : 0; }
 
     static void header(std::string s);
 

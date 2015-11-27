@@ -5,24 +5,42 @@
  *      Author: spatel78745
  */
 
+#include <iostream>
 #include "TreePlot.h"
 #include "MyException.h"
 
+using namespace std;
+
 TreePlot::TreePlot()
 {
+    try
+    {
+        mImplPref = new TreePlotImplGserv();
+    }
+    catch(MyException& me)
+    {
+        cerr << me.what();
+    }
 }
 
 void TreePlot::drawNode(int row, int col, const string& key) const
 {
-    fprintf(stderr, "drawNode(%d, %d, %s)\n", row, col, key.c_str());
 }
 
-void TreePlot::drawLeftLeg(int row, int col)
+void TreePlot::drawLeftLeg(int row, int col) const
 {
-    fprintf(stderr, "drawLeftLeg(%d, %d)\n", row, col);
 }
 
-void TreePlot::drawRightLeg(int row, int col)
+void TreePlot::drawRightLeg(int row, int col) const
 {
-    fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
+}
+
+int TreePlot:: rows() const
+{
+    return 0;
+}
+
+int TreePlot:: cols() const
+{
+    return 0;
 }

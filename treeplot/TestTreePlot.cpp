@@ -1,13 +1,13 @@
 /*
- * TestTreePlotImpl.cpp
+ * TreePlotTest.cpp
  *
  *  Created on: Nov 27, 2015
  *      Author: spatel78745
  */
 
-#include <treeplot/TestTreePlot.h>
+#include <treeplot/TreePlotTest.h>
 
-void TestTreePlot::testCopy()
+void TreePlotTest::testCopy()
 {
     /*
      * Pass: This line doesn't compile because TreePlotImpl is an abstract class
@@ -30,7 +30,7 @@ void TestTreePlot::testCopy()
 //    tpic2 = tpic1;
 }
 
-void TestTreePlot::runAll()
+void TreePlotTest::runAll()
 {
-
+    CppTest::runAll();
 }

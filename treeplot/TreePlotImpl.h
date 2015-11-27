@@ -22,13 +22,13 @@ public:
 
     virtual void drawNode(int row, int col, const string& key) const = 0;
 
-    virtual void drawLeftLeg(int row, int col) = 0;
+    virtual void drawLeftLeg(int row, int col) const = 0;
 
-    virtual void drawRightLeg(int row, int col) = 0;
+    virtual void drawRightLeg(int row, int col) const = 0;
 
-    virtual int rows() = 0;
+    virtual int rows() const = 0;
 
-    virtual int cols() = 0;
+    virtual int cols() const = 0;
 
     /*
      * Interesting: why can't this be pure virtual?

@@ -20,15 +20,17 @@ public:
 
     void drawNode(int row, int col, const string& key) const;
 
-    void drawLeftLeg(int row, int col);
+    void drawLeftLeg(int row, int col) const;
 
-    void drawRightLeg(int row, int col);
+    void drawRightLeg(int row, int col) const;
 
-    int rows() { return 0; }
+    int rows() const;
 
-    int cols() { return 0; }
+    int cols() const;
 
 private:
+    TreePlotImpl *mImplPref;
+    TreePlotImpl *mImplNoThrow;
 };
 
 

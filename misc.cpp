@@ -10,6 +10,7 @@
 #include <thread>
 #include <vector>
 #include <ctype.h>
+#include <treeplot/TreePlotTest.h>
 #include <cstdlib>
 #include <cstdio>
 #include <unistd.h>
@@ -209,4 +210,6 @@ int main()
 //    bstTest.runAll();
 	TcpSocketTest tcpSocketTest;
 	tcpSocketTest.runAll();
+//    TreePlotTest treePlotTest;
+//    treePlotTest.runAll();
 }

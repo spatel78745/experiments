@@ -9,22 +9,26 @@
 #define TREEPLOTIMPLGSERV_H_
 
 #include <string>
+#include "TreePlotImpl.h"
 
 using namespace std;
 
-class TreePlotImplGserv
+class TreePlotImplGserv : public TreePlotImpl
 {
-    virtual void drawNode(int row, int col, const string& key) const;
+public:
+    TreePlotImplGserv();
 
-    virtual void drawLeftLeg(int row, int col);
+    virtual void drawNode(int row, int col, const string& key) const override;
 
-    virtual void drawRightLeg(int row, int col);
+    virtual void drawLeftLeg(int row, int col) const override;
 
-    virtual int rows();
+    virtual void drawRightLeg(int row, int col) const override;
 
-    virtual int cols();
+    virtual int rows() const override;
 
-    virtual ~TreePlotImplGserv() = 0;
+    virtual int cols() const override;
+
+    virtual ~TreePlotImplGserv();
 };
 
 #endif /* TREEPLOTIMPLGSERV_H_ */

@@ -15,7 +15,10 @@
 #include <netinet/in.h>
 #include <iostream>
 #include "TcpSocket.h"
+#include "MyException.h"
 
+
+// TODO: don't use static, use an anonymous namespace
 static void *getInAddr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {
@@ -25,12 +28,12 @@ static void *getInAddr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-TcpSocket::TcpSocket(const string& hostname, int port) :
+TcpSocket::TcpSocket(const string& hostname, int port) noexcept :
     mHostname(hostname), mPort(port), mSockFd(-1)
 {
 }
 
-bool TcpSocket::connect()
+void TcpSocket::connect()
 {
     char s[INET6_ADDRSTRLEN];  // dotted-quad IP address
     int rv;
@@ -50,7 +53,8 @@ bool TcpSocket::connect()
 
     if ((rv = getaddrinfo(mHostname.c_str(), to_string(mPort).c_str(), &hints, &servInfo)) != 0)
     {
-        throw runtime_error(string(gai_strerror(rv)));
+        cerr << "getaddrinfo failed: " << strerror(rv);
+        throw MyException("Error: Failed to connect");
     }
 
     /*
@@ -60,13 +64,13 @@ bool TcpSocket::connect()
     {
         if ((mSockFd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
-            perror("Error socket: ");
+            perror("socket");
             continue;
         }
 
         if (::connect(mSockFd, p->ai_addr, p->ai_addrlen))
         {
-            perror("Error connect: ");
+            perror("connect");
             continue;
         }
 
@@ -76,62 +80,47 @@ bool TcpSocket::connect()
     if (p == NULL)
     {
         mSockFd = -1;
-        return false;
+        throw MyException("Error: Failed to connect");
     }
 
     inet_ntop(p->ai_family, getInAddr((struct sockaddr *)p->ai_addr), s, sizeof(s));
     cout << "connected to: " << s << endl;
 
     freeaddrinfo(servInfo);
-
-    return true;
 }
 
-bool TcpSocket::readLine(string& line)
+void TcpSocket::readLine(string& line)
 {
     int c;
 
     if (mSockFd == -1)
-    {
-        cerr << "Error: socket not connected\n";
-        return false;
-    }
+        throw MyException("Error: read failed because socket not connected");
 
     line.clear();
-    while((c = getChar()) > 0 && c != '\n')
+    while((c = getChar()) != 0 && c != '\n')
         line.push_back(string::traits_type::to_char_type(c));
-
-    return c == '\n';
 }
 
-bool TcpSocket::writeLine(const string& line)
+void TcpSocket::writeLine(const string& line) const
 {
     // Error if the socket isn't connected
     if (mSockFd == -1)
-    {
-        cerr << "Error: socket not connected\n";
-        return false;
-    }
+        throw MyException("Error: write failed because socket not connected");
 
     // Error if last character is not a null terminator
     if (*line.rbegin() != '\n')
-    {
-        cerr << "Error: last character must be a newline\n";
-        return false;
-    }
+        throw MyException("Error: last character must be a newline");
 
     if (send(mSockFd, line.c_str(), line.size(), 0) == -1)
     {
-        perror("Error: send");
-        return false;
+        perror("send");
+        throw MyException("Error: send failed");
     }
-
-    return true;
 }
 
-TcpSocket::~TcpSocket() { close(); }
+TcpSocket::~TcpSocket() noexcept { close(); }
 
-void TcpSocket::close()
+void TcpSocket::close() noexcept
 {
     if (mSockFd == -1) return;
     ::close(mSockFd);
@@ -155,14 +144,14 @@ int TcpSocket::getChar()
 
     if (n == -1)
     {
-        perror("Error recv:");
-        return -1;
+        perror("recv");
+        throw MyException("Error: recv failed");
     }
 
     if (n == 0)
     {
-        cerr << "Warn: Connection closed\n";
-        mSockFd = -1;
+        cerr << "Warning: Connection closed\n";
+        close();
         return 0;
     }
 

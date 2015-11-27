@@ -22,19 +22,19 @@ public:
         fprintf(stderr, "drawNode(%d, %d, %s)\n", row, col, key.c_str());
     }
 
-    void drawLeftLeg(int row, int col) override
+    void drawLeftLeg(int row, int col) const override
     {
         fprintf(stderr, "drawLeftLeg(%d, %d)\n", row, col);
     }
 
-    void drawRightLeg(int row, int col) override
+    void drawRightLeg(int row, int col) const override
     {
         fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
     }
 
-    virtual int rows() override { return 800; }
+    virtual int rows() const override { return 800; }
 
-    virtual int cols() override { return 800; }
+    virtual int cols() const override { return 800; }
 
     virtual ~TreePlotImplConsole() override {}
 
