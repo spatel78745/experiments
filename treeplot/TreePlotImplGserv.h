@@ -9,6 +9,7 @@
 #define TREEPLOTIMPLGSERV_H_
 
 #include <string>
+#include "TcpSocket.h"
 #include "TreePlotImpl.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ using namespace std;
 class TreePlotImplGserv : public TreePlotImpl
 {
 public:
-    TreePlotImplGserv();
+    static TreePlotImplGserv *instance();
 
     virtual void drawNode(int row, int col, const string& key) const override;
 
@@ -29,6 +30,15 @@ public:
     virtual int cols() const override;
 
     virtual ~TreePlotImplGserv();
+
+protected:
+    TreePlotImplGserv();
+
+private:
+    TcpSocket *mTcpSocket;
+    static const char *mHostname;
+    static const int mPort;
+    static TreePlotImplGserv *mInstance;
 };
 
 #endif /* TREEPLOTIMPLGSERV_H_ */

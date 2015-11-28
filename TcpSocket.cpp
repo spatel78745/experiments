@@ -118,8 +118,6 @@ void TcpSocket::writeLine(const string& line) const
     }
 }
 
-TcpSocket::~TcpSocket() noexcept { close(); }
-
 void TcpSocket::close() noexcept
 {
     if (mSockFd == -1) return;
@@ -156,4 +154,10 @@ int TcpSocket::getChar()
     }
 
     return string::traits_type::to_int_type(c);
+}
+
+TcpSocket::~TcpSocket() noexcept
+{
+    cerr << "Closing socket" << endl;
+    close();
 }

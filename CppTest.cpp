@@ -35,7 +35,7 @@ bool CppTest::assert(const char *test, bool result)
 
     mCount++;
 
-    cerr << test << ": " << pass_fail << endl;
+    cerr << "(test) " << test << ": " << pass_fail << endl;
 
     return result;
 }

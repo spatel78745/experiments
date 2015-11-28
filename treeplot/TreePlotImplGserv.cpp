@@ -7,24 +7,48 @@
 
 #include <cstdio>
 #include <string>
+#include <sstream>
+#include <iostream>
 #include "treeplot/TreePlotImplGserv.h"
 #include "MyException.h"
 
 using namespace std;
 
+const char * TreePlotImplGserv::mHostname = "localhost";
+const int TreePlotImplGserv::mPort = 50006;
+TreePlotImplGserv *TreePlotImplGserv::mInstance = nullptr;
+
+TreePlotImplGserv *TreePlotImplGserv::instance()
+{
+    if (mInstance == nullptr)
+    {
+        mInstance = new TreePlotImplGserv();
+    }
+
+    return mInstance;
+}
+
 TreePlotImplGserv::TreePlotImplGserv()
 {
-    throw MyException("Failed to open TCP connection");
+    mTcpSocket = new TcpSocket(mHostname, mPort);
+    mTcpSocket->connect();
 }
 
 void TreePlotImplGserv::drawNode(int row, int col, const string& key) const
 {
-    fprintf(stderr, "drawNode(%d, %d, %s)\n", row, col, key.c_str());
+    stringstream ss;
+    string resp;
+
+    ss << "drawNode " << row << " " << col << key;
+    mTcpSocket->writeLine(ss.str());
+
+    mTcpSocket->readLine(resp);
+    if (resp.compare("err") == 0)
+        throw new MyException("Error: gserv failure");
 }
 
 void TreePlotImplGserv::drawLeftLeg(int row, int col) const
 {
-    fprintf(stderr, "drawLeftLeg(%d, %d)\n", row, col);
 }
 
 void TreePlotImplGserv::drawRightLeg(int row, int col) const
@@ -32,8 +56,18 @@ void TreePlotImplGserv::drawRightLeg(int row, int col) const
     fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
 }
 
-int TreePlotImplGserv::rows() const { return 800; }
+int TreePlotImplGserv::rows() const
+{
+    return 800;
+}
 
-int TreePlotImplGserv::cols() const { return 800; }
+int TreePlotImplGserv::cols() const
+{
+    return 800;
+}
 
-TreePlotImplGserv::~TreePlotImplGserv() {}
+TreePlotImplGserv::~TreePlotImplGserv()
+{
+    cerr << "TreePlotImplGserv: destroying socket" << endl;
+    delete mTcpSocket;
+}

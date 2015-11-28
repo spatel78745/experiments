@@ -15,6 +15,8 @@ class TreePlotTest: public CppTest
 public:
     void testCopy();
 
+    void testGservImpl();
+
     void runAll() override;
 };
 

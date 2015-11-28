@@ -11,11 +11,11 @@
 
 using namespace std;
 
-TreePlot::TreePlot()
+TreePlot::TreePlot() noexcept
 {
     try
     {
-        mImplPref = new TreePlotImplGserv();
+        mImplPref = TreePlotImplGserv::instance();
     }
     catch(MyException& me)
     {
@@ -23,24 +23,24 @@ TreePlot::TreePlot()
     }
 }
 
-void TreePlot::drawNode(int row, int col, const string& key) const
+void TreePlot::drawNode(int row, int col, const string& key) const noexcept
 {
 }
 
-void TreePlot::drawLeftLeg(int row, int col) const
+void TreePlot::drawLeftLeg(int row, int col) const noexcept
 {
 }
 
-void TreePlot::drawRightLeg(int row, int col) const
+void TreePlot::drawRightLeg(int row, int col) const noexcept
 {
 }
 
-int TreePlot:: rows() const
+int TreePlot:: rows() const noexcept
 {
     return 0;
 }
 
-int TreePlot:: cols() const
+int TreePlot:: cols() const noexcept
 {
     return 0;
 }

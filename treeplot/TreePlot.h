@@ -14,19 +14,19 @@
 class TreePlot
 {
 public:
-    TreePlot();
+    TreePlot() noexcept;
 
-    virtual ~TreePlot() {}
+    virtual ~TreePlot() noexcept {}
 
-    void drawNode(int row, int col, const string& key) const;
+    void drawNode(int row, int col, const string& key) const noexcept;
 
-    void drawLeftLeg(int row, int col) const;
+    void drawLeftLeg(int row, int col) const noexcept;
 
-    void drawRightLeg(int row, int col) const;
+    void drawRightLeg(int row, int col) const noexcept;
 
-    int rows() const;
+    int rows() const noexcept;
 
-    int cols() const;
+    int cols() const noexcept;
 
 private:
     TreePlotImpl *mImplPref;
