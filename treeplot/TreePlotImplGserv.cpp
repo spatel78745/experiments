@@ -18,6 +18,19 @@ const char * TreePlotImplGserv::mHostname = "localhost";
 const int TreePlotImplGserv::mPort = 50006;
 TreePlotImplGserv *TreePlotImplGserv::mInstance = nullptr;
 
+void TreePlotImplGserv::sendCommand(string cmd) const
+{
+    string resp;
+    mTcpSocket->writeLine(cmd);
+
+    mTcpSocket->readLine(resp);
+    if (resp.compare("err") == 0)
+    {
+        cerr << "Error: command (" << cmd << ")" << "failed" << endl;
+        throw MyException("Error: gserv exception");
+    }
+}
+
 TreePlotImplGserv *TreePlotImplGserv::instance()
 {
     if (mInstance == nullptr)
@@ -39,12 +52,8 @@ void TreePlotImplGserv::drawNode(int row, int col, const string& key) const
     stringstream ss;
     string resp;
 
-    ss << "drawNode " << row << " " << col << key;
-    mTcpSocket->writeLine(ss.str());
-
-    mTcpSocket->readLine(resp);
-    if (resp.compare("err") == 0)
-        throw new MyException("Error: gserv failure");
+    ss << "drawNode " << row << " " << col << " " << key << endl;
+    sendCommand(ss.str());
 }
 
 void TreePlotImplGserv::drawLeftLeg(int row, int col) const
@@ -53,7 +62,6 @@ void TreePlotImplGserv::drawLeftLeg(int row, int col) const
 
 void TreePlotImplGserv::drawRightLeg(int row, int col) const
 {
-    fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
 }
 
 int TreePlotImplGserv::rows() const

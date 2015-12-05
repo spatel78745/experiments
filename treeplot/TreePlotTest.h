@@ -15,6 +15,8 @@ class TreePlotTest: public CppTest
 public:
     void testCopy();
 
+    void testGservConnectionLost();
+
     void testGservImpl();
 
     void runAll() override;

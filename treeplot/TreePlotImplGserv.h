@@ -35,6 +35,9 @@ protected:
     TreePlotImplGserv();
 
 private:
+    void sendCommand(string cmd) const;
+
+private:
     TcpSocket *mTcpSocket;
     static const char *mHostname;
     static const int mPort;

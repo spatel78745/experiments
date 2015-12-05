@@ -17,6 +17,8 @@ public:
 
     void testNotConnected();
 
+    void testConnectionLost();
+
     void testIo();
 
     void runAll() override;

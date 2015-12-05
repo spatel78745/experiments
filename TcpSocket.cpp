@@ -118,6 +118,20 @@ void TcpSocket::writeLine(const string& line) const
     }
 }
 
+void TcpSocket::writeChar(char c) const
+{
+    // Error if the socket isn't connected
+    if (mSockFd == -1)
+        throw MyException("Error: write failed because socket not connected");
+
+    if (send(mSockFd, &c, 1, 0) == -1)
+    {
+        perror("send");
+        throw MyException("Error: send failed");
+    }
+}
+
+
 void TcpSocket::close() noexcept
 {
     if (mSockFd == -1) return;

@@ -4,7 +4,7 @@
  *  Created on: Nov 24, 2015
  *      Author: spatel78745
  */
-
+#include <thread>
 #include "TcpSocket.h"
 #include "TcpSocketTest.h"
 #include "MyException.h"
@@ -102,11 +102,34 @@ void TcpSocketTest::testIo()
 
 }
 
+void TcpSocketTest::testConnectionLost()
+{
+    const int delay = 1; // ms
+    TcpSocket ts{mGoodHost, mGoodPort};
+
+    if (!assert("connect", connect(ts))) return;
+    if (!assert("connected", ts.isConnected())) return;
+
+    /*
+     * 1. Start the echo server
+     * 2. Send it a character in a loop with a small delay. D
+     * 3. Stop the echo server and see what happens
+     */
+    for(int i = 0; ;++i)
+    {
+        cerr << "Writing character " << i << endl;
+        ts.writeChar('x');
+        cerr << "Wrote character " << i << endl;
+        std::this_thread::sleep_for(chrono::seconds(1));
+    }
+}
+
 void TcpSocketTest::runAll()
 {
-    testConstructor();
-    testNotConnected();
-    testIo();
+//    testConstructor();
+//    testNotConnected();
+//    testIo();
+    testConnectionLost();
 
     fprintf(stderr, "Summary: count = %d, pass = %d, fail = %d, score = %.1f %%", count(), pass(),
             fail(), score());

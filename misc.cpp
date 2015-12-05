@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <unistd.h>
+#include <ratio>
 #include "Bst.h"
 #include "FileBuffer.h"
 #include "TcpSocketTest.h"
@@ -201,15 +202,40 @@ void testPipe()
     {
         close(mypipe[1]);
     }
+}
 
+void testRatio()
+{
+    /*
+     * Ok, I'm going to convert the time unit of hs (half-seconds) to milliseconds using all this
+     * duration and ratio non-sense.
+     *
+     * Now, I want to represent 3 hs, so it will be like this:
+     * - Given that you make a duration-type like this: duration<int, ratio<seconds, ticks>,
+     *  3 hs is duration<int, ratio<1, 2>> t(3)
+     * - Given that you convert like this:
+     *   output_duration = duration_cast<output_type> (input_duration)
+     *   - and we have:
+     *     - output_type = duration<int, ratio<1, 1000>)
+     *     - input_duration = t
+     *   - the conversion expression is:
+     *     - duration_cast<duration<int, ratio<1, 1000>>>(t).count()
+     *   - and the answer should be 1500
+     */
+    using namespace chrono;
+
+    duration<int, ratio<1, 2>> t(3); // 3 hs
+    int ms = duration_cast<duration<int, ratio<1, 1000>>>(t).count();
+    cout << t.count() << "hs == " << ms;
 }
 
 int main()
 {
 //    BstTest bstTest;
 //    bstTest.runAll();
-//	TcpSocketTest tcpSocketTest;
-//	tcpSocketTest.runAll();
-    TreePlotTest treePlotTest;
-    treePlotTest.runAll();
+	TcpSocketTest tcpSocketTest;
+	tcpSocketTest.runAll();
+//    TreePlotTest treePlotTest;
+//    treePlotTest.runAll();
+//    testRatio();
 }

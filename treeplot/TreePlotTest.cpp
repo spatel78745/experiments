@@ -51,16 +51,41 @@ Gserv *instance()
     }
 }
 
-void drawNode(Gserv *gs, int row, int col, const string& key)
+bool drawNode(Gserv *gs, int row, int col, const string& key)
 {
-
+    try
+    {
+        gs->drawNode(row, col, key);
+        return true;
+    }
+    catch(MyException& me)
+    {
+        cerr << me.what() << endl;
+        return false;
+    }
 }
+
+void TreePlotTest::testGservConnectionLost()
+{
+    unique_ptr<Gserv> gs(instance());
+    char input;
+
+    if (!assert("get instance", gs != nullptr))
+    {
+        return;
+    }
+
+    cerr << "Kill gserv and hit <return>" << endl;
+    cin >> input;
+}
+
 
 void TreePlotTest::testGservImpl()
 {
     unique_ptr<Gserv> gs(instance());
 
     assert("get instance", gs != nullptr);
+    assert("draw node", drawNode(gs.get(), 1, 10, "A"));
 }
 
 void TreePlotTest::runAll()

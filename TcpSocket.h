@@ -31,7 +31,7 @@ public:
 
     /*
      * Reads a line from the socket
-     * - &line (out): The line. Doesn't contain the delimiting '\n'.
+     * - (out) &line : The line. Doesn't contain the delimiting '\n'.
      *
      * Precond: Socket must be connected
      *
@@ -44,9 +44,19 @@ public:
      *
      * Precond: Socket must be connected
      *
-     * - &line(in): The line. Must end in '\n'.
+     * - (in) &line: The line. Must end in '\n'.
      */
     void writeLine(const string& line) const;
+
+    /*
+     * Writes a character to the socket
+     *
+     * Precond: Socket must be connected
+     *
+     * - (in) c : The character to write
+     */
+    void writeChar(char c) const;
+
 
     /*
      * Closes (and disconnects) the socket
