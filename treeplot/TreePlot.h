@@ -8,31 +8,25 @@
 #ifndef TREEPLOT_H_
 #define TREEPLOT_H_
 
-#include "treeplot/TreePlotImplConsole.h"
-#include "treeplot/TreePlotImplGserv.h"
+#include <string>
+using namespace std;
 
 class TreePlot
 {
 public:
-    TreePlot() noexcept;
+    TreePlot() noexcept {};
 
     virtual ~TreePlot() noexcept {}
 
-    void drawNode(int row, int col, const string& key) const noexcept;
+    virtual void drawNode(int row, int col, const string& key) const;
 
-    void drawLeftLeg(int row, int col) const noexcept;
+    virtual void drawLeftLeg(int row1, int col1, int row2, int col2) const;
 
-    void drawRightLeg(int row, int col) const noexcept;
+    virtual void drawRightLeg(int row1, int col1, int row2, int col2) const;
 
-    int rows() const noexcept;
+    virtual int rows() const { return 200; }
 
-    int cols() const noexcept;
-
-private:
-    TreePlotImpl *mImplPref;
-    TreePlotImpl *mImplNoThrow;
+    virtual int cols() const { return 200; }
 };
-
-
 
 #endif /* TREEPLOT_H_ */

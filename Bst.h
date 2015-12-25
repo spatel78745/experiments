@@ -113,43 +113,26 @@ public:
         delete mRoot;
     }
 
-    void draw(const NodeT *x, int colStart, int colEnd, int row, TreePlot& treePlot) const
+    int draw(const NodeT *x, int colStart, int colEnd, int row, TreePlot& treePlot) const
     {
-//        // Stubs
-//        function<bool (int, int)> drawLeftLeg = [](int row, int col)
-//        {
-//            fprintf(stderr, "drawLeftLeg(%d, %d)\n", row, col);
-//            return true;
-//        };
-//
-//        function<bool (int, int)> drawRightLeg = [](int row, int col)
-//        {
-//            fprintf(stderr, "drawRightLeg(%d, %d)\n", row, col);
-//            return true;
-//        };
-//
-//        function<bool (int, int, const NodeT*)> drawNode = [](int row, int col, const NodeT *x)
-//        {
-//            fprintf(stderr, "drawNode(%d, %d, %s)\n", row, col, x->mKey.c_str());
-//            return true;
-//        };
-//
-        if (x == nullptr) return;
+        if (x == nullptr) return 0;
 
         int col = (colStart + colEnd) / 2; // TODO: Fix stupid overflow bug if you want
         treePlot.drawNode(row, col, x->mKey);
 
         if (x->mLeft != nullptr)
         {
-            treePlot.drawLeftLeg(row, col);
-            draw(x->mLeft, colStart, col, row + 1, treePlot);
+            int childCol = draw(x->mLeft, colStart, col, row + 1, treePlot);
+            treePlot.drawLeftLeg(row, col, row + 1, childCol);
         }
 
         if (x->mRight != nullptr)
         {
-            treePlot.drawRightLeg(row, col);
-            draw(x->mRight, colEnd, col, row + 1, treePlot);
+            int childCol = draw(x->mRight, col, colEnd, row + 1, treePlot);
+            treePlot.drawRightLeg(row, col, row + 1, childCol);
         }
+
+        return col;
     }
 
     void draw() const

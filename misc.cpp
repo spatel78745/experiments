@@ -231,10 +231,10 @@ void testRatio()
 
 int main()
 {
-//    BstTest bstTest;
-//    bstTest.runAll();
-	TcpSocketTest tcpSocketTest;
-	tcpSocketTest.runAll();
+    BstTest bstTest;
+    bstTest.runAll();
+//	TcpSocketTest tcpSocketTest;
+//	tcpSocketTest.runAll();
 //    TreePlotTest treePlotTest;
 //    treePlotTest.runAll();
 //    testRatio();

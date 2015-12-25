@@ -11,36 +11,17 @@
 
 using namespace std;
 
-TreePlot::TreePlot() noexcept
+void TreePlot::drawNode(int row, int col, const string& key) const
 {
-    try
-    {
-        mImplPref = TreePlotImplGserv::instance();
-    }
-    catch(MyException& me)
-    {
-        cerr << me.what();
-    }
+    cerr << "drawNode " << row << " " << col << " " << key << endl;
 }
 
-void TreePlot::drawNode(int row, int col, const string& key) const noexcept
+void TreePlot::drawLeftLeg(int row1, int col1, int row2, int col2) const
 {
+    cerr << "drawLeftLeg " << row1 << " " << col1 << " " << row2 << " " << col2 << endl;
 }
 
-void TreePlot::drawLeftLeg(int row, int col) const noexcept
+void TreePlot::drawRightLeg(int row1, int col1, int row2, int col2) const
 {
-}
-
-void TreePlot::drawRightLeg(int row, int col) const noexcept
-{
-}
-
-int TreePlot:: rows() const noexcept
-{
-    return 0;
-}
-
-int TreePlot:: cols() const noexcept
-{
-    return 0;
+    cerr << "drawRightLeg " << row1 << " " << col1 << " " << row2 << " " << col2 << endl;
 }
