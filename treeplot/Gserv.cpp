@@ -63,10 +63,7 @@ int Gserv::cols() const
 }
 
 Gserv::~Gserv()
-{
-    cerr << "TreePlotImplGserv: destroying socket" << endl;
-    delete mTcpSocket;
-}
+{ delete mTcpSocket; }
 
 void Gserv::sendCommand(string cmd) const
 {

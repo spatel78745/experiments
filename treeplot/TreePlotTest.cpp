@@ -88,8 +88,45 @@ using namespace std;
 //    assert("draw node", drawNode(gs.get(), 1, 10, "A"));
 //}
 //
-//void TreePlotTest::runAll()
-//{
-//    testGservImpl();
-//    CppTest::runAll();
-//}
+
+void TreePlotTest::testPlot()
+{
+    const string& testName = "testPlot";
+
+    header(testName);
+
+    ask("Start gserv and press <Enter>");
+
+    try
+    {
+        Gserv gs;
+        int cols = gs.cols();
+        int row = 0;
+
+        // Root
+        gs.drawNode(row, cols/2, "B");
+        // Left child
+        gs.drawNode(row + 1, cols/2 - 1, "A");
+        // Right child
+        gs.drawNode(row + 1, cols/2 + 1, "C");
+        // Legs
+        gs.drawLeftLeg(row, cols/2, row + 1, cols/2 - 1);
+        gs.drawRightLeg(row, cols/2, row + 1, cols/2 + 1);
+
+        if (!ask("Do you see a tree corresponding to insert sequence b a c? (y/n)"))
+            throw MyException("Error: Bad plot");
+
+        assert(testName, true);
+    }
+    catch(MyException& e)
+    {
+        cerr << e.what() << endl;
+        assert(testName, false);
+    }
+}
+
+void TreePlotTest::runAll()
+{
+    testPlot();
+    CppTest::runAll();
+}

@@ -11,6 +11,8 @@
 #include <string>
 #include <iostream>
 
+using namespace std;
+
 class CppTest
 {
 public:
@@ -23,6 +25,8 @@ public:
     int pass()  { return mPass; }
 
     int fail()  { return mFail; }
+
+    bool ask(const string& prompt, char expected='y') const noexcept;
 
     double score()
     {

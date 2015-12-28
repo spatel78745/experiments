@@ -13,10 +13,15 @@
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
 
+namespace
+{
+    ostream& os = cout;
+}
+
 void CppTest::header(string s)
 {
     static string border("============");
-    cerr << border << " " << s << " " << border << endl;
+    os << border << " " << s << " " << border << endl;
 }
 
 bool CppTest::assert(const char *test, bool result)
@@ -35,7 +40,7 @@ bool CppTest::assert(const char *test, bool result)
 
     mCount++;
 
-    cerr << "(test) " << test << ": " << pass_fail << endl;
+    os << "(test) " << test << ": " << pass_fail << endl;
 
     return result;
 }
@@ -44,6 +49,17 @@ bool CppTest::assert(std::string test, bool result)
 {
     return assert(test.c_str(), result);
 }
+
+bool CppTest::ask(const string& prompt, char expected) const noexcept
+{
+    char c;
+
+    os << prompt << endl;
+    c = cin.get();
+
+    return tolower(c) == expected;
+}
+
 
 void CppTest::runAll()
 {

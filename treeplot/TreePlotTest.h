@@ -13,11 +13,11 @@
 class TreePlotTest: public CppTest
 {
 public:
-    void testCopy();
 
-    void testGservConnectionLost();
-
-    void testGservImpl();
+    /*
+     * Draws a 3-node tree and asks the user if it looks OK
+     */
+    void testPlot();
 
     void runAll() override;
 };

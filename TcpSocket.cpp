@@ -17,6 +17,7 @@
 #include "TcpSocket.h"
 #include "MyException.h"
 
+//#define SPDEBUG
 
 // TODO: don't use static, use an anonymous namespace
 static void *getInAddr(struct sockaddr *sa)
@@ -37,6 +38,9 @@ void TcpSocket::connect()
 {
     char s[INET6_ADDRSTRLEN];  // dotted-quad IP address
     int rv;
+#ifdef SPDEBUG
+    cerr << "Connecting to " << mHostname << ":" << mPort << endl;
+#endif
 
     /*
      * Get a list of struct addrinfo for (mHostname, mPort). This'll give us the
@@ -64,13 +68,17 @@ void TcpSocket::connect()
     {
         if ((mSockFd = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
         {
+#ifdef SPDEBUG
             perror("socket");
+#endif
             continue;
         }
 
         if (::connect(mSockFd, p->ai_addr, p->ai_addrlen))
         {
+#ifdef SPDBUG
             perror("connect");
+#endif
             continue;
         }
 
@@ -172,6 +180,8 @@ int TcpSocket::getChar()
 
 TcpSocket::~TcpSocket() noexcept
 {
+#ifdef SPDEBUG
     cerr << "Closing socket" << endl;
+#endif
     close();
 }

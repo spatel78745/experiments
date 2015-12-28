@@ -17,7 +17,7 @@ using namespace std;
 class Gserv : public TreePlot
 {
 public:
-    Gserv(const char *host, int port);
+    Gserv(const char *host="", int port=50006);
 
     virtual void drawNode(int row, int col, const string& key) const override;
 
