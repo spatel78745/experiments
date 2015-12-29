@@ -54,18 +54,26 @@ void Gserv::drawRightLeg(int row1, int col1, int row2, int col2) const
 
 int Gserv::rows() const
 {
-    return 800;
+    stringstream ss;
+    string resp;
+
+    ss << "rows\n";
+    return(stoi(sendCommand(ss.str())));
 }
 
 int Gserv::cols() const
 {
-    return 800;
+    stringstream ss;
+    string resp;
+
+    ss << "cols\n";
+    return(stoi(sendCommand(ss.str())));
 }
 
 Gserv::~Gserv()
 { delete mTcpSocket; }
 
-void Gserv::sendCommand(string cmd) const
+string Gserv::sendCommand(string cmd) const
 {
     string resp;
     mTcpSocket->writeLine(cmd);
@@ -76,4 +84,6 @@ void Gserv::sendCommand(string cmd) const
         cerr << "Error: command (" << cmd << ")" << "failed" << endl;
         throw MyException("Error: gserv exception");
     }
+
+    return resp;
 }

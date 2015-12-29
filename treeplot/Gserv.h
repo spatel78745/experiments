@@ -32,7 +32,7 @@ public:
     virtual ~Gserv() override;
 
 private:
-    void sendCommand(string cmd) const;
+    string sendCommand(string cmd) const;
 
 private:
     TcpSocket *mTcpSocket;

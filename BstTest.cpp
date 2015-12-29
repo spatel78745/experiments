@@ -523,6 +523,7 @@ void BstTest::testDraw()
 {
     header("testDraw");
 
+
     const BstT bst =
     {
         { "H", 1 },
@@ -536,9 +537,13 @@ void BstTest::testDraw()
         { "T", 9 },
     };
 
-    bst.draw();
+    const Gserv gs;
+    bst.draw(gs);
 
-    assert("stub", true);
+    if (!ask("Do you see a tree corresponding to insert sequence HCSBERXYT? (y/n)"))
+        assert("testDraw", false);
+
+    assert("testDraw", true);
 }
 
 void BstTest::runAll()

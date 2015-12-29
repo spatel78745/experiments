@@ -5,10 +5,10 @@
  *      Author: spatel78745
  */
 
-#include <treeplot/Gserv.h>
-#include <iostream>
-#include "MyException.h"
+#include "treeplot/Gserv.h"
 #include "treeplot/TreePlotTest.h"
+#include <iostream>
+#include <MyException.h>
 
 using namespace std;
 
@@ -104,10 +104,11 @@ void TreePlotTest::testPlot()
         int row = 0;
 
         // Root
+        cout << "canvas: (" << cols << ", " << gs.rows() << ")" << endl;
         gs.drawNode(row, cols/2, "B");
         // Left child
         gs.drawNode(row + 1, cols/2 - 1, "A");
-        // Right child
+        // Right child´
         gs.drawNode(row + 1, cols/2 + 1, "C");
         // Legs
         gs.drawLeftLeg(row, cols/2, row + 1, cols/2 - 1);

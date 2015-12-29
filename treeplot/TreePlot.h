@@ -11,6 +11,8 @@
 #include <string>
 using namespace std;
 
+
+// TODO: make this a singleton and use a factory maybe
 class TreePlot
 {
 public:

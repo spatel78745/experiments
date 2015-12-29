@@ -17,7 +17,7 @@
 #include <functional>
 #include <stdexcept>
 #include "Node.h"
-#include "treeplot/TreePlot.h"
+#include "treeplot/Gserv.h"
 
 using std::string;
 using std::cout;
@@ -113,7 +113,7 @@ public:
         delete mRoot;
     }
 
-    int draw(const NodeT *x, int colStart, int colEnd, int row, TreePlot& treePlot) const
+    int draw(const NodeT *x, int colStart, int colEnd, int row, const TreePlot& treePlot) const
     {
         if (x == nullptr) return 0;
 
@@ -135,9 +135,8 @@ public:
         return col;
     }
 
-    void draw() const
+    void draw(const TreePlot& treePlot) const
     {
-        TreePlot treePlot;
         draw(mRoot, 0, treePlot.cols(), 0, treePlot);
     }
 
