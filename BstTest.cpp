@@ -13,6 +13,7 @@
 #include "Bst.h"
 #include "Node.h"
 #include "BstTest.h"
+#include "MyException.h"
 
 // TODO: Is doing this bad? Seems better then a long list of using std:: etc.
 using namespace std;
@@ -521,8 +522,9 @@ void BstTest::testDeleteMin()
 
 void BstTest::testDraw()
 {
-    header("testDraw");
+    const string& testName = "testDraw";
 
+    header(testName);
 
     const BstT bst =
     {
@@ -537,13 +539,21 @@ void BstTest::testDraw()
         { "T", 9 },
     };
 
-    const Gserv gs;
-    bst.draw(gs);
+    try
+    {
+        const Gserv gs;
+        bst.draw(gs);
 
-    if (!ask("Do you see a tree corresponding to insert sequence HCSBERXYT? (y/n)"))
-        assert("testDraw", false);
+        if (!ask("Do you see a tree corresponding to insert sequence HCSBERXYT? (y/n)"))
+            assert("testDraw", false);
 
-    assert("testDraw", true);
+        assert(testName, true);
+    }
+    catch(MyException& e)
+    {
+        cout << e.what() << endl;
+        assert(testName, false);
+    }
 }
 
 void BstTest::runAll()
