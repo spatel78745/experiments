@@ -19,6 +19,7 @@
 #include "FileBuffer.h"
 #include "TcpSocketTest.h"
 #include "BstTest.h"
+#include "SequentialSearchST.h"
 
 using namespace std;
 
@@ -231,8 +232,15 @@ void testRatio()
 
 int main()
 {
-    BstTest bstTest;
-    bstTest.runAll();
+    SequentialSearchST<string, int> ss;
+    ss.put("sameer", 44);
+    ss.put("john", 32);
+    ss.dump();
+
+//    BstTest bstTest;
+//    bstTest.runAll();
+//    ss.put("john", 80);
+//    SequentialSearchST<string, int>::iterator i = ss.begin();
 //	TcpSocketTest tcpSocketTest;
 //	tcpSocketTest.runAll();
 //    TreePlotTest treePlotTest;

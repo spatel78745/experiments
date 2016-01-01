@@ -14,15 +14,15 @@ class Hashtable
 public:
     typedef K* iterator;
     typedef const K* const_iterator;
-    typedef size_t size_type;
+//    typedef size_t size_type;
     typedef V value_type;
 
 public:
     Hashtable() { Hashtable(997); }
-    explicit Hashtable(size_type M)
+//    explicit Hashtable(size_type M)
 
 private:
-    size_type mM;
+//    size_type mM;
     V* mData;
     V* mLimit;
 };

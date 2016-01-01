@@ -8,34 +8,77 @@
 #ifndef SEQUENTIALSEARCHST_H_
 #define SEQUENTIALSEARCHST_H_
 
-template <class T>
+#include <cstdlib>
+#include <iostream>
+
+using namespace std;
+
+template <class K, class V>
 class SequentialSearchST
 {
 public:
+
+//    class Iterator
+//    {
+//        class Node;
+//    public:
+//        Iterator(Node *pos) : mPos(pos) {}
+//
+//        Iterator& operator++()
+//        {
+//            if (mPos != nullptr) mPos = mPos->mNext;
+//        }
+//
+//    private:
+//        Node *mPos;
+//    };
+
     typedef size_t size_type;
-    typedef T value_type;
+//    typedef Iterator iterator;
 
-public:
-    SequentialSearchST();
+    SequentialSearchST() {};
 
-    void put(T t)
+//    Iterator begin() { return iterator(mHead); }
+//
+//    Iterator end()
+//    {
+//        Node *p = mHead;
+//
+//        while(p && p->mNext != nullptr)
+//            p = p->mNext;
+//
+//        return Iterator(p);
+//    }
+
+    void put(K key, V val)
     {
-
+        Node *node = new Node(key, val);
+        if (mHead == nullptr)
+            mHead = node;
+        else
+        {
+            node->mNext = mHead;
+            mHead = node;
+        }
     }
 
-    T& get()
+    void dump()
     {
-
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            cout << "key " << p->mKey << "val " << p->mVal << endl;
+        }
     }
 
 private:
     class Node
     {
     public:
-        Node(T data): mData(data) {}
+        Node(K key, V val): mKey(key), mVal(val) {}
     public:
-        T mData;
-        T *mNext = nullptr;
+        K mKey;
+        V mVal;
+        Node *mNext = nullptr;
     };
 
 private: // data
