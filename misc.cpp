@@ -235,12 +235,15 @@ int main()
     SequentialSearchST<string, int> ss;
     ss.put("sameer", 44);
     ss.put("john", 32);
-    ss.dump();
+//    for(auto key = ss.begin(); key != ss.end(); ++key)
+    for(auto key: ss)
+    {
+        cout << "key " << key << " val " << ss[key] << endl;
+    }
 
 //    BstTest bstTest;
 //    bstTest.runAll();
 //    ss.put("john", 80);
-//    SequentialSearchST<string, int>::iterator i = ss.begin();
 //	TcpSocketTest tcpSocketTest;
 //	tcpSocketTest.runAll();
 //    TreePlotTest treePlotTest;

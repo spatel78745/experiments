@@ -16,39 +16,73 @@ using namespace std;
 template <class K, class V>
 class SequentialSearchST
 {
-public:
+private:
+    class Node
+    {
+    public:
+        Node(K key, V val): mKey(key), mVal(val) {}
+    public:
+        K mKey;
+        V mVal;
+        Node *mNext = nullptr;
+    };
 
-//    class Iterator
-//    {
-//        class Node;
-//    public:
-//        Iterator(Node *pos) : mPos(pos) {}
-//
-//        Iterator& operator++()
-//        {
-//            if (mPos != nullptr) mPos = mPos->mNext;
-//        }
-//
-//    private:
-//        Node *mPos;
-//    };
+public:
+    class Iterator
+    {
+    public:
+        Iterator(Node *pos) : mPos(pos) {}
+
+        Iterator& operator++()
+        {
+            if (mPos != nullptr) mPos = mPos->mNext;
+            return *this;
+        }
+
+        Iterator& operator++(int)
+        {
+            Iterator current = Iterator(mPos);
+            ++(*this);
+
+            return current;
+        }
+
+        K& operator*()
+        {
+            return mPos->mKey;
+        }
+
+        bool operator==(const Iterator& other) const
+        {
+            return other.mPos == mPos;
+        }
+
+        bool operator!=(const Iterator& other) const
+        {
+            return other.mPos != mPos;
+        }
+
+    private:
+        Node *mPos;
+    };
 
     typedef size_t size_type;
-//    typedef Iterator iterator;
+    typedef Iterator iterator;
 
     SequentialSearchST() {};
 
-//    Iterator begin() { return iterator(mHead); }
-//
-//    Iterator end()
-//    {
+    Iterator begin() { return Iterator(mHead); }
+
+    Iterator end()
+    {
+        return nullptr;
 //        Node *p = mHead;
 //
 //        while(p && p->mNext != nullptr)
 //            p = p->mNext;
 //
 //        return Iterator(p);
-//    }
+    }
 
     void put(K key, V val)
     {
@@ -62,6 +96,14 @@ public:
         }
     }
 
+    V& operator[](K& key)
+    {
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            if (p->mKey == key) return p->mVal;
+        }
+    }
+
     void dump()
     {
         for(Node *p = mHead; p != nullptr; p = p->mNext)
@@ -70,16 +112,6 @@ public:
         }
     }
 
-private:
-    class Node
-    {
-    public:
-        Node(K key, V val): mKey(key), mVal(val) {}
-    public:
-        K mKey;
-        V mVal;
-        Node *mNext = nullptr;
-    };
 
 private: // data
     Node *mHead = nullptr;
