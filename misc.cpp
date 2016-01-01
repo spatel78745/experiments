@@ -241,6 +241,9 @@ int main()
         cout << "key " << key << " val " << ss[key] << endl;
     }
 
+    cout << "key unknown" << " val " << ss[string("unknown")] << endl;
+
+
 //    BstTest bstTest;
 //    bstTest.runAll();
 //    ss.put("john", 80);

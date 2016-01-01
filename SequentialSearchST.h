@@ -73,18 +73,9 @@ public:
 
     Iterator begin() { return Iterator(mHead); }
 
-    Iterator end()
-    {
-        return nullptr;
-//        Node *p = mHead;
-//
-//        while(p && p->mNext != nullptr)
-//            p = p->mNext;
-//
-//        return Iterator(p);
-    }
+    Iterator end() { return nullptr; }
 
-    void put(K key, V val)
+    Node *put(K key, V val)
     {
         Node *node = new Node(key, val);
         if (mHead == nullptr)
@@ -94,14 +85,18 @@ public:
             node->mNext = mHead;
             mHead = node;
         }
+
+        return node;
     }
 
-    V& operator[](K& key)
+    V& operator[](K key)
     {
         for(Node *p = mHead; p != nullptr; p = p->mNext)
         {
             if (p->mKey == key) return p->mVal;
         }
+
+        return(put(key, V{})->mVal);
     }
 
     void dump()
@@ -111,7 +106,6 @@ public:
             cout << "key " << p->mKey << "val " << p->mVal << endl;
         }
     }
-
 
 private: // data
     Node *mHead = nullptr;
