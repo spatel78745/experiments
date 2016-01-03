@@ -15,11 +15,14 @@
 #include <cstdio>
 #include <unistd.h>
 #include <ratio>
+#include <functional>
 #include "Bst.h"
 #include "FileBuffer.h"
 #include "TcpSocketTest.h"
 #include "BstTest.h"
 #include "SequentialSearchST.h"
+#include "SequentialSearchSTTest.h"
+#include "Hashtable.h"
 
 using namespace std;
 
@@ -230,19 +233,37 @@ void testRatio()
     cout << t.count() << "hs == " << ms;
 }
 
+template<class T>
+class Dummy
+{
+public:
+    Dummy(T data): mData(data) { cout << "constructing dummy" << endl; }
+    T mData;
+};
+
+template<class T>
+ostream& operator<<(ostream &os, const Dummy<T>& d)
+{
+    os << d.mData;
+    return os;
+}
+
 int main()
 {
-    SequentialSearchST<string, int> ss;
-    ss.put("sameer", 44);
-    ss.put("john", 32);
-//    for(auto key = ss.begin(); key != ss.end(); ++key)
-    for(auto key: ss)
-    {
-        cout << "key " << key << " val " << ss[key] << endl;
-    }
+    Hashtable<string, int> ht;
 
-    cout << "key unknown" << " val " << ss[string("unknown")] << endl;
+    ht["Sameer"] = 44;
+    ht["John"] = 32;
+    ht["Rajiv"] = 80;
+    ht["Gordon"] = 100;
+    ht["Connor McCloud"] = 1500;
+    ht["Methuselah"] = 900;
+    ht["Cthulu"] = 100000;
+    ht["Cookie Monster"] = 10;
+//    ht.keys();
 
+//    SequentialSearchSTTest stTest;
+//    stTest.runAll();
 
 //    BstTest bstTest;
 //    bstTest.runAll();

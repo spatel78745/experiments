@@ -21,6 +21,17 @@ private:
     {
     public:
         Node(K key, V val): mKey(key), mVal(val) {}
+
+        bool operator==(const Node& other) const
+        {
+            return (mKey == other.mKey) && (mVal == other.mVal);
+        }
+
+        bool operator!=(const Node& other) const
+        {
+            return !(*this == other);
+        }
+
     public:
         K mKey;
         V mVal;
@@ -39,7 +50,7 @@ public:
             return *this;
         }
 
-        Iterator& operator++(int)
+        Iterator& operator++(int) const
         {
             Iterator current = Iterator(mPos);
             ++(*this);
@@ -47,7 +58,7 @@ public:
             return current;
         }
 
-        K& operator*()
+        K& operator*() const
         {
             return mPos->mKey;
         }
@@ -68,13 +79,73 @@ public:
 
     typedef size_t size_type;
     typedef Iterator iterator;
+    typedef const Iterator const_iterator;
 
     SequentialSearchST() {};
+
+    ~SequentialSearchST()
+    {
+        int count{0};
+
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            cout << __func__ << ": deleting: " << p->mKey << endl;
+            delete p;
+            ++count;
+        }
+
+        cout << __func__ << ": Deleted " << count << " elements" << endl;
+    }
+
+//    SequentialSearchST(const SequentialSearchST& ss)
+//    {
+//
+//    }
+
+    bool operator==(const SequentialSearchST& other) const
+    {
+        if (size() != other.size()) return false;
+        for(Node *p = mHead, *q = other.mHead; p != nullptr && q != nullptr;
+                p = p->mNext, q = q->mNext)
+        {
+            if (*p != *q) return false;
+        }
+
+        return true;
+    }
+
+    bool operator!=(const SequentialSearchST& other) const
+    {
+        return !(*this == other);
+    }
 
     Iterator begin() { return Iterator(mHead); }
 
     Iterator end() { return nullptr; }
 
+    size_type size() const
+    {
+        size_type size{0};
+
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            ++size;
+        }
+
+        return size;
+    }
+
+    V& operator[](K key)
+    {
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            if (p->mKey == key) return p->mVal;
+        }
+
+        return(put(key, V{})->mVal);
+    }
+
+private: // data
     Node *put(K key, V val)
     {
         Node *node = new Node(key, val);
@@ -89,27 +160,31 @@ public:
         return node;
     }
 
-    V& operator[](K key)
-    {
-        for(Node *p = mHead; p != nullptr; p = p->mNext)
-        {
-            if (p->mKey == key) return p->mVal;
-        }
-
-        return(put(key, V{})->mVal);
-    }
-
-    void dump()
-    {
-        for(Node *p = mHead; p != nullptr; p = p->mNext)
-        {
-            cout << "key " << p->mKey << "val " << p->mVal << endl;
-        }
-    }
-
-private: // data
     Node *mHead = nullptr;
     size_type mSize = 0;
 };
+
+template<class K, class V>
+ostream& operator<<(ostream &os, SequentialSearchST<K, V>& st)
+{
+    os << '[';
+
+    auto iter = st.begin();
+
+    //TODO: Why doesn't this work, and I had to use 'auto iter'
+//    SequentialSearchST<K, V>::iterator iter = st.begin();
+//    cout << typeid(iter).name() << endl;
+    os << "(" << *iter << ", " << st[*iter] << ")";
+    ++iter;
+
+    for( ;iter != st.end(); ++iter )
+    {
+        os << " " << "(" << *iter << ", " << st[*iter] << ")";
+    }
+
+    os << ']';
+
+    return os;
+}
 
 #endif /* SEQUENTIALSEARCHST_H_ */

@@ -6,4 +6,3 @@
  */
 
 #include <SequentialSearchST.h>
-
