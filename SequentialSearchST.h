@@ -10,6 +10,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "MyException.h"
 
 using namespace std;
 
@@ -44,13 +45,13 @@ public:
     public:
         Iterator(Node *pos) : mPos(pos) {}
 
-        Iterator& operator++()
+        const Iterator& operator++()
         {
             if (mPos != nullptr) mPos = mPos->mNext;
             return *this;
         }
 
-        Iterator& operator++(int) const
+        const Iterator& operator++(int) const
         {
             Iterator current = Iterator(mPos);
             ++(*this);
@@ -128,9 +129,9 @@ public:
         return !(*this == other);
     }
 
-    Iterator begin() { return Iterator(mHead); }
+    Iterator begin() const { return Iterator(mHead); }
 
-    Iterator end() { return nullptr; }
+    Iterator end() const { return nullptr; }
 
     size_type size() const
     {
@@ -146,15 +147,39 @@ public:
 
     V& operator[](K key)
     {
-        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        Node *match;
+
+        if ((match = get(key)))
         {
-            if (p->mKey == key) return p->mVal;
+            return match->mVal;
         }
 
-        return(put(key, V{})->mVal);
+        return(put(key, V())->mVal);
     }
 
-private: // data
+    V operator[](K key) const
+    {
+        Node *match;
+
+        if ((match = get(key)))
+        {
+            return match->mVal;
+        }
+
+        throw MyException("Error: No such key");
+    }
+
+private:
+    Node *get(K key) const
+    {
+        for(Node *p = mHead; p != nullptr; p = p->mNext)
+        {
+            if (p->mKey == key) return p;
+        }
+
+        return nullptr;
+    }
+
     Node *put(K key, V val)
     {
         Node *node = new Node(key, val);

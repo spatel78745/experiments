@@ -12,15 +12,47 @@
 
 using namespace std;
 
-typedef string keytype;
-typedef int valtype;
-
 namespace
 {
 } // Anonymous namespace
 
+void SequentialSearchSTTest::testListInitConst()
+{
+    header("testListInitConst");
+
+    const SequentialSearchST<keytype, valtype> st {
+            { "Sameer", 44 },
+            { "John", 32   },
+            { "Rajiv", 80  },
+            { "Gordon", 100 },
+            { "Connor McCloud", 1500 }
+    };
+
+    cout << "st[Sameer] = " << st["Sameer"] << endl;
+    assert("st[Sameer] = 44", st["Sameer"] == 44);
+
+    for(string& key: st)
+    {
+        cout << key << ": " << st[key] << endl;
+    }
+
+    try
+    {
+        valtype val{st["unknown"]};
+        cout << "st[unknown]=" << val << endl;
+        assert("Absent key throws exception", false);
+    }
+    catch(MyException& e)
+    {
+        cout << "Ooops! -- " << e.what() << endl;
+        assert("Absent key throws exception", true);
+    }
+}
+
 void SequentialSearchSTTest::testListInit()
 {
+    header("testListInit");
+
     SequentialSearchST<keytype, valtype> st = {
             { "Sameer", 44 },
             { "John", 32   },
@@ -29,10 +61,15 @@ void SequentialSearchSTTest::testListInit()
             { "Connor McCloud", 1500 }
     };
 
-    for(string key: st)
+    for(string& key: st)
     {
         cout << key << ": " << st[key] << endl;
     }
+
+    st["Sameer"] = 45;
+    cout << "st[Sameer] after change: " << st["Sameer"] << endl;
+    assert("Change", st["Sameer"] == 45);
+
 }
 
 void SequentialSearchSTTest::test()
@@ -86,5 +123,6 @@ void SequentialSearchSTTest::runAll()
 {
 //    test();
     testListInit();
+    testListInitConst();
     CppTest::runAll();
 }
