@@ -80,8 +80,17 @@ public:
     typedef size_t size_type;
     typedef Iterator iterator;
     typedef const Iterator const_iterator;
+    typedef pair<K, V> pair_type;
 
     SequentialSearchST() {};
+
+    SequentialSearchST(initializer_list<pair_type> lst)
+    {
+        for(pair_type p: lst)
+        {
+            put(p.first, p.second);
+        }
+    }
 
     ~SequentialSearchST()
     {

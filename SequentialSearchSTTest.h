@@ -15,6 +15,8 @@ class SequentialSearchSTTest : public CppTest
 public:
     void test();
 
+    void testListInit();
+
     void runAll() override;
 };
 

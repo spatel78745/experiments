@@ -250,20 +250,20 @@ ostream& operator<<(ostream &os, const Dummy<T>& d)
 
 int main()
 {
-    Hashtable<string, int> ht;
-
-    ht["Sameer"] = 44;
-    ht["John"] = 32;
-    ht["Rajiv"] = 80;
-    ht["Gordon"] = 100;
-    ht["Connor McCloud"] = 1500;
-    ht["Methuselah"] = 900;
-    ht["Cthulu"] = 100000;
-    ht["Cookie Monster"] = 10;
+//    Hashtable<string, int> ht;
+//
+//    ht["Sameer"] = 44;
+//    ht["John"] = 32;
+//    ht["Rajiv"] = 80;
+//    ht["Gordon"] = 100;
+//    ht["Connor McCloud"] = 1500;
+//    ht["Methuselah"] = 900;
+//    ht["Cthulu"] = 100000;
+//    ht["Cookie Monster"] = 10;
 //    ht.keys();
 
-//    SequentialSearchSTTest stTest;
-//    stTest.runAll();
+    SequentialSearchSTTest stTest;
+    stTest.runAll();
 
 //    BstTest bstTest;
 //    bstTest.runAll();

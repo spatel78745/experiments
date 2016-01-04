@@ -19,6 +19,22 @@ namespace
 {
 } // Anonymous namespace
 
+void SequentialSearchSTTest::testListInit()
+{
+    SequentialSearchST<keytype, valtype> st = {
+            { "Sameer", 44 },
+            { "John", 32   },
+            { "Rajiv", 80  },
+            { "Gordon", 100 },
+            { "Connor McCloud", 1500 }
+    };
+
+    for(string key: st)
+    {
+        cout << key << ": " << st[key] << endl;
+    }
+}
+
 void SequentialSearchSTTest::test()
 {
     SequentialSearchST<keytype, valtype> st;
@@ -68,6 +84,7 @@ void SequentialSearchSTTest::test()
 
 void SequentialSearchSTTest::runAll()
 {
-    test();
+//    test();
+    testListInit();
     CppTest::runAll();
 }
