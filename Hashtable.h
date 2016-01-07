@@ -32,9 +32,21 @@ public:
         cout << __func__ << ": Created hash table with M=" << M << endl;
     }
 
-    Hashtable(const Hashtable &ht): Hashtable(ht.mM)
+    Hashtable(const Hashtable &other): Hashtable(other.mM)
     {
+        for(int i = 0; i != mM; ++i)
+        {
+            mSt[i] = other.mSt[i];
+        }
+    }
 
+    Hashtable& operator=(Hashtable rhs)
+    {
+        swap(this->mN, rhs.mN);
+        swap(this->mM, rhs.mM);
+        swap(this->mSt, rhs.mSt);
+
+        return *this;
     }
 
     V& operator[](K key)
