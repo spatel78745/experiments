@@ -16,6 +16,62 @@ namespace
 {
 } // Anonymous namespace
 
+void SequentialSearchSTTest::testCopyAssignment()
+{
+    header(__func__);
+
+    SequentialSearchST<keytype, valtype> st {
+            { "Sameer", 44 },
+            { "John", 32   },
+            { "Rajiv", 80  },
+            { "Gordon", 100 },
+            { "Connor McCloud", 1500 }
+    };
+
+    SequentialSearchST<keytype, valtype> st2 {
+        { "Joe", 65 },
+        { "Andy", 109   },
+        { "Chris", 34  },
+        { "Brocktoon", 92 },
+        { "Mad Max", 41 }
+    };
+
+    cout << "Before assignment st2 = st" << endl;
+    cout << "st: " << st << endl;
+    cout << "st2: " << st2 << endl;
+
+    st2 = st;
+    cout << "After assignment st2 = st" << endl;
+    cout << "st: " << st << endl;
+    cout << "st2: " << st2 << endl;
+
+    st2["Rajiv"] = 69;
+    st["Vladimir"] = 55;
+    cout << "After changes" << endl;
+    cout << "st: " << st << endl;
+    cout << "st2: " << st2 << endl;
+}
+
+void SequentialSearchSTTest::testCopyConstructor()
+{
+    header("testCopyConstructor");
+
+    const SequentialSearchST<keytype, valtype> st {
+            { "Sameer", 44 },
+            { "John", 32   },
+            { "Rajiv", 80  },
+            { "Gordon", 100 },
+            { "Connor McCloud", 1500 }
+    };
+
+    SequentialSearchST<keytype, valtype> stCp(st);
+
+    cout << "st: " << st << endl;
+    cout << "st copy: " << stCp << endl;
+
+    assert("Copies ==?", st == stCp) ;
+}
+
 void SequentialSearchSTTest::testListInitConst()
 {
     header("testListInitConst");
@@ -122,7 +178,9 @@ void SequentialSearchSTTest::test()
 void SequentialSearchSTTest::runAll()
 {
 //    test();
-    testListInit();
-    testListInitConst();
+//    testListInit();
+//    testListInitConst();
+//    testCopyConstructor();
+    testCopyAssignment();
     CppTest::runAll();
 }

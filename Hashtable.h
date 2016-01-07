@@ -32,6 +32,11 @@ public:
         cout << __func__ << ": Created hash table with M=" << M << endl;
     }
 
+    Hashtable(const Hashtable &ht): Hashtable(ht.mM)
+    {
+
+    }
+
     V& operator[](K key)
     {
         size_type slot{hash(key)};

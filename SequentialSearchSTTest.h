@@ -11,8 +11,6 @@
 #include "CppTest.h"
 #include "SequentialSearchST.h"
 
-// TODO: make the methods const
-
 class SequentialSearchSTTest : public CppTest
 {
 public:
@@ -20,6 +18,10 @@ public:
     typedef int valtype;
 
     void test();
+
+    void testCopyConstructor();
+
+    void testCopyAssignment();
 
     void testListInit();
 

@@ -93,6 +93,15 @@ public:
         }
     }
 
+    SequentialSearchST(const SequentialSearchST& other)
+    {
+        for(auto key: other)
+        {
+            put(key, other[key]);
+        }
+        reverse();
+    }
+
     ~SequentialSearchST()
     {
         int count{0};
@@ -106,11 +115,6 @@ public:
 
         cout << __func__ << ": Deleted " << count << " elements" << endl;
     }
-
-//    SequentialSearchST(const SequentialSearchST& ss)
-//    {
-//
-//    }
 
     bool operator==(const SequentialSearchST& other) const
     {
@@ -169,6 +173,13 @@ public:
         throw MyException("Error: No such key");
     }
 
+    SequentialSearchST& operator=(SequentialSearchST rhs)
+    {
+        swap(this->mHead, rhs.mHead);
+
+        return *this;
+    }
+
 private:
     Node *get(K key) const
     {
@@ -180,26 +191,46 @@ private:
         return nullptr;
     }
 
-    Node *put(K key, V val)
+    void prepend(Node *node)
     {
-        Node *node = new Node(key, val);
         if (mHead == nullptr)
+        {
             mHead = node;
+            node->mNext = nullptr;
+        }
         else
         {
             node->mNext = mHead;
             mHead = node;
         }
+    }
+
+    Node *put(K key, V val)
+    {
+        Node *node = new Node(key, val);
+        prepend(node);
 
         return node;
     }
 
+    void reverse()
+    {
+        Node *p = mHead;
+        mHead = nullptr;
+
+        while(p)
+        {
+            Node *next = p->mNext;
+            prepend(p);
+            p = next;
+        }
+    }
+
     Node *mHead = nullptr;
-    size_type mSize = 0;
 };
 
 template<class K, class V>
-ostream& operator<<(ostream &os, SequentialSearchST<K, V>& st)
+ostream& operator<<(ostream &os, const SequentialSearchST<K, V>& st)
 {
     os << '[';
 
