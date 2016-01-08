@@ -20,6 +20,9 @@ template <class K, class V, size_t initialSize=5>
 class Hashtable
 {
 public:
+    template<class K_, class V_>
+    friend ostream& operator<<(ostream &os, const Hashtable<K_, V_>& ht);
+
     typedef size_t size_type;
 
     Hashtable(): Hashtable(initialSize)
@@ -40,9 +43,34 @@ public:
         }
     }
 
+    int size()
+    {
+        int sz = 0;
+
+        for(int i = 0; i < mM; ++i)
+        {
+            sz += mSt[i].size();
+        }
+
+        return sz;
+    }
+
+
+    bool operator==(const Hashtable& other) const
+    {
+        if (size() != other.size() || mM != other.mM) return false;
+
+        for(int i = 0; i != mM; ++i)
+        {
+            if (mSt[i] != other.mSt[i]) return false;
+        }
+
+        return true;
+    }
+
+
     Hashtable& operator=(Hashtable rhs)
     {
-        swap(this->mN, rhs.mN);
         swap(this->mM, rhs.mM);
         swap(this->mSt, rhs.mSt);
 
@@ -51,12 +79,12 @@ public:
 
     V& operator[](K key)
     {
-        size_type slot{hash(key)};
-        SequentialSearchST<K, V>& st{ mSt[slot] };
+        return mSt[hash(key)][key];
+    }
 
-//        cout << __func__ << ": slot=" << slot << " st[" << key << "]=" << st[key] << endl;
-
-        return st[key];
+    V operator[](K key) const
+    {
+        return mSt[hash(key)][key];
     }
 
     ~Hashtable()
@@ -84,32 +112,22 @@ private:
         return std::hash<K>()(string(key)) % mM;
     }
 
-    size_type mN{0};
     size_type mM;
     SequentialSearchST<K, V> *mSt = nullptr;
 };
 
-//template<class K, class V>
-//ostream& operator<<(ostream &os, SequentialSearchST<K, V>& st)
-//{
-//    os << '[';
-//
-//    auto iter = st.begin();
-//
-//    //TODO: Why doesn't this work, and I had to use 'auto iter'
-////    SequentialSearchST<K, V>::iterator iter = st.begin();
-////    cout << typeid(iter).name() << endl;
-//    os << "(" << *iter << ", " << st[*iter] << ")";
-//    ++iter;
-//
-//    for( ;iter != st.end(); ++iter )
-//    {
-//        os << " " << "(" << *iter << ", " << st[*iter] << ")";
-//    }
-//
-//    os << ']';
-//
-//    return os;
-//}
+template<class K, class V>
+ostream& operator<<(ostream &os, const Hashtable<K, V>& ht)
+{
+    cout << "mM = " << ht.mM << endl;
+    for(int i = 0; i != ht.mM; ++i)
+    {
+//        int size = ht.mSt[i].size();
+//        if (size != 0) cout << i << ":" << ht.mSt[i] << endl;
+        cout << i << ":" << ht.mSt[i] << endl;
+    }
+
+    return os;
+}
 
 #endif /* HASHTABLE_H_ */

@@ -108,7 +108,7 @@ public:
 
         for(Node *p = mHead; p != nullptr; p = p->mNext)
         {
-            cout << __func__ << ": deleting: " << p->mKey << endl;
+//            cout << __func__ << ": deleting: " << p->mKey << endl;
             delete p;
             ++count;
         }
@@ -239,8 +239,12 @@ ostream& operator<<(ostream &os, const SequentialSearchST<K, V>& st)
     //TODO: Why doesn't this work, and I had to use 'auto iter'
 //    SequentialSearchST<K, V>::iterator iter = st.begin();
 //    cout << typeid(iter).name() << endl;
-    os << "(" << *iter << ", " << st[*iter] << ")";
-    ++iter;
+
+    if (iter != st.end())
+    {
+        os << "(" << *iter << ", " << st[*iter] << ")";
+        ++iter;
+    }
 
     for( ;iter != st.end(); ++iter )
     {

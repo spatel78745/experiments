@@ -23,6 +23,7 @@
 #include "SequentialSearchST.h"
 #include "SequentialSearchSTTest.h"
 #include "Hashtable.h"
+#include "HashtableTest.h"
 
 using namespace std;
 
@@ -250,6 +251,10 @@ ostream& operator<<(ostream &os, const Dummy<T>& d)
 
 int main()
 {
+
+    HashtableTest htTest;
+    htTest.runAll();
+
 //    Hashtable<string, int> ht;
 //
 //    ht["Sameer"] = 44;
@@ -262,8 +267,8 @@ int main()
 //    ht["Cookie Monster"] = 10;
 //    ht.keys();
 
-    SequentialSearchSTTest stTest;
-    stTest.runAll();
+//    SequentialSearchSTTest stTest;
+//    stTest.runAll();
 
 //    BstTest bstTest;
 //    bstTest.runAll();

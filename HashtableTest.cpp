@@ -17,8 +17,6 @@ namespace
 
 void HashtableTest::testCopyAssignment()
 {
-    header(__func__);
-
 //    SequentialSearchST<keytype, valtype> st {
 //            { "Sameer", 44 },
 //            { "John", 32   },
@@ -130,7 +128,33 @@ void HashtableTest::testListInit()
 void HashtableTest::test()
 {
 
-    Ht ht1, ht2(ht1);
+    header(__func__);
+
+    // Test insert via []
+    Ht ht;
+
+    cout << "Inserted elements via []" << endl;
+    ht["Sameer"] = 44;
+    ht["John"] = 32;
+    ht["Rajiv Vindaloo"] = 80;
+    ht["Gordon Ramsay"] = 50;
+    ht["Connor McCloud"] = 1500;
+    ht["Cthulu"] = 1500000;
+    ht["Terminator T1000"] = 30;
+
+    cout << "Dump using []" << endl;
+    cout << "Sameer: " << ht["Sameer"] << endl;
+    cout << "Rajiv Vindaloo: " << ht["Rajiv Vindaloo"] << endl;
+    cout << "Gordon Ramsay: " << ht["Gordon Ramsay"] << endl;
+    cout << "Connor McCloud: " << ht["Connor McCloud"] << endl;
+    cout << "Cthulu: " << ht["Cthulu"] << endl;
+    cout << "Terminator T1000: " << ht["Terminator T1000"] << endl;
+
+    cout << "Dump using <<" << endl;
+    cout << ht << endl;
+
+    const Ht htConst;
+
 //    SequentialSearchST<keytype, valtype> st;
 //    st["Sameer"] = 44;
 //    st["John"] = 32;
@@ -178,10 +202,10 @@ void HashtableTest::test()
 
 void HashtableTest::runAll()
 {
-//    test();
+    test();
 //    testListInit();
 //    testListInitConst();
 //    testCopyConstructor();
-    testCopyAssignment();
+//    testCopyAssignment();
     CppTest::runAll();
 }
