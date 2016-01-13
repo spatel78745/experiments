@@ -127,7 +127,6 @@ void HashtableTest::testListInit()
 
 void HashtableTest::test()
 {
-
     header(__func__);
 
     // Test insert via []
@@ -200,9 +199,69 @@ void HashtableTest::test()
 //    }
 }
 
+void HashtableTest::testIterator()
+{
+    header(__func__);
+
+    // Test insert via []
+    Ht ht;
+    pair<string, int> res;
+
+    cout << "Inserted elements via []" << endl;
+    ht["Sameer"] = 44;
+    ht["John"] = 32;
+    ht["Rajiv Vindaloo"] = 80;
+    ht["Gordon Ramsay"] = 50;
+    ht["Connor McCloud"] = 1500;
+    ht["Cthulu"] = 1500000;
+    ht["Terminator T1000"] = 30;
+
+    cout << "[Dump of hashtable]" << endl;
+    ht.dump();
+
+    cout << "[++]" << endl;
+    Ht::iterator iter = ht.begin();
+
+    for (int i = 0; i < 50; ++i) {
+        cout << "(" << i << ")" << endl;
+        ++iter;
+    }
+
+//    for (Ht::iterator iter = ht.begin(); iter != ht.end(); ++iter) {
+//
+//    }
+//    Ht::iterator end = ht.end();
+
+//    cout << ht << endl;
+//    cout << ht.begin().toStr() << endl;
+//    cout << ht.end().toStr() << endl;
+//
+//    Ht::iterator iter = ht.begin();
+//    res = *iter;
+//    cout << "iter:" << iter.toStr() << " key=" << res.first << " val=" << res.second << endl;
+//
+//    ++iter;
+//    res = *iter;
+//    cout << "iter:" << iter.toStr() << " key=" << res.first << " val=" << res.second << endl;
+//
+//    ++iter;
+//    res = *iter;
+//    cout << "iter:" << iter.toStr() << " key=" << res.first << " val=" << res.second << endl;
+
+
+
+//    for(auto p: ht)
+//    {
+//        cout << p.first << ": " << p.second << endl;
+//    }
+}
+
+
+
 void HashtableTest::runAll()
 {
-    test();
+    testIterator();
+//    test();
 //    testListInit();
 //    testListInitConst();
 //    testCopyConstructor();

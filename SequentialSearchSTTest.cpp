@@ -175,12 +175,33 @@ void SequentialSearchSTTest::test()
 //    }
 }
 
+void SequentialSearchSTTest::testIteratorGetPair()
+{
+    header("testListInit");
+
+    StT st =
+    {
+        { "Sameer", 44 },
+        { "John", 32   },
+        { "Rajiv", 80  },
+        { "Gordon", 100 },
+        { "Connor McCloud", 1500 }
+    };
+
+    for(StT::iterator iter = st.begin(); iter != st.end(); ++iter)
+    {
+        pairT p = iter.getPair();
+        cout << p.first << ": " << p.second << endl;
+    }
+}
+
 void SequentialSearchSTTest::runAll()
 {
 //    test();
 //    testListInit();
 //    testListInitConst();
 //    testCopyConstructor();
-    testCopyAssignment();
+//    testCopyAssignment();
+    testIteratorGetPair();
     CppTest::runAll();
 }

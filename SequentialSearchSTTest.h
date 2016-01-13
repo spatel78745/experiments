@@ -16,8 +16,12 @@ class SequentialSearchSTTest : public CppTest
 public:
     typedef string keytype;
     typedef int valtype;
+    typedef pair<keytype, valtype> pairT;
+    typedef SequentialSearchST<keytype, valtype> StT;
 
     void test();
+
+    void testIteratorGetPair();
 
     void testCopyConstructor();
 

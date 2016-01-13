@@ -20,6 +20,8 @@ public:
 
     void test();
 
+    void testIterator();
+
     void testCopyConstructor();
 
     void testCopyAssignment();

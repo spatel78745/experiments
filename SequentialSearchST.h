@@ -43,15 +43,17 @@ public:
     class Iterator
     {
     public:
-        Iterator(Node *pos) : mPos(pos) {}
+        Iterator(Node *pos): mPos(pos) {}
 
-        const Iterator& operator++()
+        Iterator(): Iterator(nullptr) {}
+
+        Iterator& operator++()
         {
             if (mPos != nullptr) mPos = mPos->mNext;
             return *this;
         }
 
-        const Iterator& operator++(int) const
+        Iterator& operator++(int)
         {
             Iterator current = Iterator(mPos);
             ++(*this);
@@ -62,6 +64,11 @@ public:
         K& operator*() const
         {
             return mPos->mKey;
+        }
+
+        pair<K&, V&> getPair() const
+        {
+            return pair<K&, V&>(mPos->mKey, mPos->mVal);
         }
 
         bool operator==(const Iterator& other) const
@@ -113,7 +120,7 @@ public:
             ++count;
         }
 
-        cout << __func__ << ": Deleted " << count << " elements" << endl;
+//        cout << __func__ << ": Deleted " << count << " elements" << endl;
     }
 
     bool operator==(const SequentialSearchST& other) const
@@ -159,6 +166,23 @@ public:
         }
 
         return(put(key, V())->mVal);
+    }
+
+    pair<K, V> operator[](int idx)
+    {
+        pair<K, V> res{"", 0};
+
+        Node *p = mHead;
+
+        while(p && idx)
+        {
+            p = p->mNext;
+            --idx;
+        }
+
+        if (p) res = pair<K, V>(p->mKey, p->mVal);
+
+        return res;
     }
 
     V operator[](K key) const
