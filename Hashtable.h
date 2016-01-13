@@ -57,11 +57,11 @@ public:
         {
             pair<K, V> before = mIter.getPair();
 
-            cout << "++ Enter" << endl;
+//            cout << "++ Enter" << endl;
 
             if (mCurr == mEnd)
             {
-                cout << "++ No more elements" << endl;
+//                cout << "++ No more elements" << endl;
                 return *this;
             }
 
@@ -71,24 +71,25 @@ public:
                 mCurr = nextRow(mCurr + 1, mEnd);
                 if (mCurr == mEnd)
                 {
-                    cout << "++ No more elements" << endl;
+//                    cout << "++ No more elements" << endl;
                     mIter = nullptr;
+//                    cout << "++ assigned nullptr" << endl;
                     return *this;
                 }
 
                 mIter = mCurr->begin();
-                cout << "++ Wrap" << endl;
+//                cout << "++ Wrap" << endl;
             }
 
             pair<K, V>  after = mIter.getPair();
-            cout << "++ before: " << before.first << ", " << before.second
-                 << " after: "    << after.first  << ", " << after.second << endl;
+//            cout << "++ before: " << before.first << ", " << before.second
+//                 << " after: "    << after.first  << ", " << after.second << endl;
 
-            cout << "++ Exit" << endl;
+//            cout << "++ Exit" << endl;
 
             return *this;
         }
-//
+
 //        Iterator& operator++(int)
 //        {
 //            Iterator current = Iterator(mRow, mCol, mSt);
@@ -97,21 +98,20 @@ public:
 //            return current;
 //        }
 //
-//        pairT operator*() const
-//        {
-//            cout << "* row=" << mRow << " col=" << mCol << endl;
-//            return mSt[mRow][mCol];
-//        }
-//
-//        bool operator==(const Iterator& other) const
-//        {
-//            return (other.mRow == mRow) && (other.mCol == mCol);
-//        }
-//
-//        bool operator!=(const Iterator& other) const
-//        {
-//            return !(*this == other);
-//        }
+        pairT operator*() const
+        {
+            return mIter.getPair();
+        }
+
+        bool operator==(const Iterator& other) const
+        {
+            return (other.mCurr == mCurr) && (other.mEnd == mEnd) && (other.mIter == mIter);
+        }
+
+        bool operator!=(const Iterator& other) const
+        {
+            return !(*this == other);
+        }
 //
 //        string toStr() const
 //        {

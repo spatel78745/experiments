@@ -81,6 +81,11 @@ public:
             return other.mPos != mPos;
         }
 
+        void dump() const
+        {
+            cout << __func__ << ": mPos=" << mPos << endl;
+        }
+
     private:
         Node *mPos;
     };

@@ -199,6 +199,8 @@ void HashtableTest::test()
 //    }
 }
 
+
+
 void HashtableTest::testIterator()
 {
     header(__func__);
@@ -216,21 +218,39 @@ void HashtableTest::testIterator()
     ht["Cthulu"] = 1500000;
     ht["Terminator T1000"] = 30;
 
+//    SequentialSearchST<keytype, valtype> st = {
+//            { "Sameer", 44 },
+//            { "John", 32   },
+//            { "Rajiv", 80  },
+//            { "Gordon", 100 },
+//            { "Connor McCloud", 1500 }
+//    };
+//
+//    SequentialSearchST<keytype, valtype>::iterator iter = st.begin();
+//    iter.dump();
+//
+//    iter = nullptr;
+//    iter.dump();
+
+
+
     cout << "[Dump of hashtable]" << endl;
     ht.dump();
-
-    cout << "[++]" << endl;
-    Ht::iterator iter = ht.begin();
-
-    for (int i = 0; i < 50; ++i) {
-        cout << "(" << i << ")" << endl;
-        ++iter;
-    }
-
-//    for (Ht::iterator iter = ht.begin(); iter != ht.end(); ++iter) {
 //
+//    cout << "[++]" << endl;
+//    Ht::iterator iter = ht.begin();
+//    res = *iter;
+//    cout << "[*]: key=" << res.first << " val=" << res.second << endl;
+//
+//    for (int i = 0; i < 50; ++i) {
+//        cout << "(" << i << ")" << endl;
+//        ++iter;
 //    }
-//    Ht::iterator end = ht.end();
+
+    for (Ht::iterator iter = ht.begin(); iter != ht.end(); ++iter) {
+        res = *iter;
+        cout << "key=" << res.first << " val=" << res.second << endl;
+    }
 
 //    cout << ht << endl;
 //    cout << ht.begin().toStr() << endl;
