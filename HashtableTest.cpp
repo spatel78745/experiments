@@ -199,24 +199,33 @@ void HashtableTest::test()
 //    }
 }
 
-
-
 void HashtableTest::testIterator()
 {
     header(__func__);
 
     // Test insert via []
-    Ht ht;
+//    Ht ht;
     pair<string, int> res;
 
-    cout << "Inserted elements via []" << endl;
-    ht["Sameer"] = 44;
-    ht["John"] = 32;
-    ht["Rajiv Vindaloo"] = 80;
-    ht["Gordon Ramsay"] = 50;
-    ht["Connor McCloud"] = 1500;
-    ht["Cthulu"] = 1500000;
-    ht["Terminator T1000"] = 30;
+//    cout << "Inserted elements via []" << endl;
+//    ht["Sameer"] = 44;
+//    ht["John"] = 32;
+//    ht["Rajiv Vindaloo"] = 80;
+//    ht["Gordon Ramsay"] = 50;
+//    ht["Connor McCloud"] = 1500;
+//    ht["Cthulu"] = 1500000;
+//    ht["Terminator T1000"] = 30;
+
+    cout << "Insert elements via list constructor" << endl;
+    Ht ht = {
+        { "Sameer", 44 },
+        { "John", 32   },
+        { "Rajiv", 80  },
+        { "Gordon", 100 },
+        { "Connor McCloud", 1500 },
+        { "Cthulu", 1500000 },
+        { "Terminator T1000", 30 },
+    };
 
 //    SequentialSearchST<keytype, valtype> st = {
 //            { "Sameer", 44 },
@@ -232,10 +241,8 @@ void HashtableTest::testIterator()
 //    iter = nullptr;
 //    iter.dump();
 
-
-
-    cout << "[Dump of hashtable]" << endl;
-    ht.dump();
+//    cout << "[Dump of hashtable]" << endl;
+//    ht.dump();
 //
 //    cout << "[++]" << endl;
 //    Ht::iterator iter = ht.begin();
@@ -247,8 +254,14 @@ void HashtableTest::testIterator()
 //        ++iter;
 //    }
 
-    for (Ht::iterator iter = ht.begin(); iter != ht.end(); ++iter) {
-        res = *iter;
+//    for (Ht::iterator iter = ht.begin(); iter != ht.end(); ++iter) {
+//        res = *iter;
+//        cout << "key=" << res.first << " val=" << res.second << endl;
+//    }
+
+    cout << "Dump using range syntax or whatever it's called" << endl;
+    for(auto res: ht)
+    {
         cout << "key=" << res.first << " val=" << res.second << endl;
     }
 
@@ -276,7 +289,24 @@ void HashtableTest::testIterator()
 //    }
 }
 
+void HashtableTest::testOutputStream()
+{
+    Ht ht = {
+        { "Sameer", 44 },
+        { "John", 32   },
+        { "Rajiv", 80  },
+        { "Gordon", 100 },
+        { "Connor McCloud", 1500 },
+        { "Cthulu", 1500000 },
+        { "Terminator T1000", 30 },
+    };
 
+    cout << "Output from dump method" << endl;
+    ht.dump();
+
+    cout << "Output from operator<< overload" << endl;
+    cout << ht << endl;
+}
 
 void HashtableTest::runAll()
 {

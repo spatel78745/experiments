@@ -30,6 +30,8 @@ public:
 
     void testListInitConst();
 
+    void testOutputStream();
+
     void runAll() override;
 };
 

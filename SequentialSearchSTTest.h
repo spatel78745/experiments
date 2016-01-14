@@ -31,6 +31,8 @@ public:
 
     void testListInitConst();
 
+    void testDel();
+
     void runAll() override;
 };
 

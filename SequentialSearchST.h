@@ -209,6 +209,21 @@ public:
         return *this;
     }
 
+    void del(K key)
+    {
+        if (mHead == nullptr) return;
+
+        Node *node, *prev;
+        for(node = prev = mHead; node != nullptr; prev = node, node = node->mNext)
+            if (node->mKey == key) break;
+
+        if (node == nullptr) return;
+        if (node == prev) mHead = node->mNext;
+        else              prev->mNext = node->mNext;
+
+        delete node;
+    }
+
 private:
     Node *get(K key) const
     {

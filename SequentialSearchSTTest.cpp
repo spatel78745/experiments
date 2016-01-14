@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <iterator>
 #include "SequentialSearchSTTest.h"
 #include "SequentialSearchST.h"
 
@@ -195,6 +196,87 @@ void SequentialSearchSTTest::testIteratorGetPair()
     }
 }
 
+void SequentialSearchSTTest::testDel()
+{
+    const initializer_list<pairT> list = {
+        { "Sameer", 44 },
+        { "John", 32   },
+        { "Rajiv", 80  },
+        { "Gordon", 100 },
+        { "Connor McCloud", 1500 }
+    };
+
+    const StT st_orig{list};
+    StT st;
+    pairT elem;
+    initializer_list<pairT>::iterator iter;
+    initializer_list<pairT>::iterator start;
+
+    cout << "===================" << endl;
+    cout << "Delete from head" << endl;
+    st = st_orig;
+    cout << st << endl;
+
+    iter = list.end();
+    start = list.begin();
+
+    while(iter != start)
+    {
+        --iter;
+        elem = *iter;
+        cout << "Deleting " << elem.first << endl;
+        st.del(elem.first);
+        cout << st << endl;
+    }
+
+    cout << "Deleting again " << elem.first << endl;
+    cout << st << endl;
+    cout << "===================" << endl;
+
+    cout << "===================" << endl;
+    cout << "Delete interior" << endl;
+    st = st_orig;
+    cout << st << endl;
+
+    iter = list.end();
+    start = list.begin();
+    --iter;
+    while(iter != start)
+    {
+        --iter;
+        elem = *iter;
+        cout << "Deleting one past the head " << elem.first << endl;
+
+        st.del(elem.first);
+        cout << st << endl;
+    }
+
+    iter = list.end();
+    --iter;
+    elem = *iter;
+    cout << "Deleting final element " << elem.first << endl;
+    st.del(elem.first);
+    cout << st << endl;
+
+    cout << "Deleting again " << elem.first << endl;
+    st.del(elem.first);
+    cout << st << endl;
+    cout << "===================" << endl;
+
+    cout << "===================" << endl;
+    cout << "Delete from empty" << endl;
+    st = StT{};
+    cout << st << endl;
+
+    cout << "Deleting random string Sameer" << endl;
+    st.del("Sameer");
+    cout << st << endl;
+
+    cout << "Deleting again random string Sameer" << endl;
+    st.del("Sameer");
+    cout << st << endl;
+}
+
 void SequentialSearchSTTest::runAll()
 {
 //    test();
@@ -202,6 +284,7 @@ void SequentialSearchSTTest::runAll()
 //    testListInitConst();
 //    testCopyConstructor();
 //    testCopyAssignment();
-    testIteratorGetPair();
+//    testIteratorGetPair();
+    testDel();
     CppTest::runAll();
 }

@@ -27,6 +27,7 @@ public:
     template<class K_, class V_>
     friend ostream& operator<<(ostream &os, const Hashtable<K_, V_>& ht);
     typedef SequentialSearchST<K, V> StT;
+    typedef pair<K, V> pairT;
 
     class Iterator
     {
@@ -90,14 +91,14 @@ public:
             return *this;
         }
 
-//        Iterator& operator++(int)
-//        {
-//            Iterator current = Iterator(mRow, mCol, mSt);
-//            ++(*this);
-//
-//            return current;
-//        }
-//
+        Iterator operator++(int)
+        {
+            Iterator current = *this;
+            ++(*this);
+
+            return current;
+        }
+
         pairT operator*() const
         {
             return mIter.getPair();
@@ -152,6 +153,14 @@ public:
         }
     }
 
+    Hashtable(initializer_list<pairT> lst): Hashtable()
+    {
+        for(pairT p: lst)
+        {
+            (*this)[p.first] = p.second;
+        }
+    }
+
     int size()
     {
         int sz = 0;
@@ -201,6 +210,11 @@ public:
         delete[] mSt;
     }
 
+//    void del(K key)
+//    {
+//        mSt[hash(key)].del(key);
+//    }
+
     void keys()
     {
         for(int i = 0; i < mM; ++i)
@@ -232,25 +246,34 @@ private:
     SequentialSearchST<K, V> *mSt = nullptr;
 };
 
+
+// TODO: This is exactly the same function as the one in SequentialSearchST
+// TODO: The hashtable argument should be a const...you need a const_iterator for Hashtable
 template<class K, class V>
-ostream& operator<<(ostream &os, const Hashtable<K, V>& ht)
+ostream& operator<<(ostream &os, Hashtable<K, V>& ht)
 {
-    cout << "mM = " << ht.mM << endl;
-    for(int i = 0; i != ht.mM; ++i)
+    os << '[';
+
+    auto iter = ht.begin();
+
+    typename Hashtable<K, V>::pairT elem = *iter;
+
+    if (iter != ht.end())
     {
-//        int size = ht.mSt[i].size();
-//        if (size != 0) cout << i << ":" << ht.mSt[i] << endl;
-        cout << i << ":" << ht.mSt[i] << endl;
+        os << "(" << elem.first << ", " << elem.second << ")";
+        ++iter;
     }
+
+    for( ;iter != ht.end(); ++iter )
+    {
+        elem = *iter;
+        os << " " << "(" << elem.first << ", " << elem.second << ")";
+    }
+
+    os << ']';
 
     return os;
 }
-
-// TODO: Why doesn't this work?
-//template<class K, class V>
-//ostream& operator<<(ostream &os, const typename Hashtable<K, V>::iterator& iter)
-//{    return os;
-//}
 
 
 #endif /* HASHTABLE_H_ */
