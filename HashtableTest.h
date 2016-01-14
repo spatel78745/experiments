@@ -16,7 +16,9 @@ class HashtableTest : public CppTest
 public:
     typedef string keytype;
     typedef int valtype;
+    // TODO: this should be HtT
     typedef Hashtable<keytype, valtype> Ht;
+    typedef pair<keytype, valtype> pairT;
 
     void test();
 
@@ -31,6 +33,8 @@ public:
     void testListInitConst();
 
     void testOutputStream();
+
+    void testDel();
 
     void runAll() override;
 };

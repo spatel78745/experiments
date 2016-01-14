@@ -52,6 +52,7 @@ public:
             mCurr = nextRow(begin, end);
             if (mCurr != end)
                 mIter = mCurr->begin();
+//            cout << __func__ << " mCurr " << mCurr << " mEnd " << mEnd << endl;
         }
 
         Iterator& operator++()
@@ -131,7 +132,16 @@ public:
     typedef size_t size_type;
     typedef Iterator iterator;
 
-    Iterator begin() { return Iterator(mSt, mSt + mM); }
+    Iterator begin()
+    {
+        if (size() == 0)
+        {
+//            cout << __func__ << " returning end(),  end() == end? " << (end() == end()) << endl;
+            return end();
+        }
+
+        return Iterator(mSt, mSt + mM);
+    }
 
     Iterator end() const { return Iterator(mSt + mM, mSt + mM); }
 
@@ -210,10 +220,10 @@ public:
         delete[] mSt;
     }
 
-//    void del(K key)
-//    {
-//        mSt[hash(key)].del(key);
-//    }
+    void del(K key)
+    {
+        mSt[hash(key)].del(key);
+    }
 
     void keys()
     {
@@ -256,10 +266,11 @@ ostream& operator<<(ostream &os, Hashtable<K, V>& ht)
 
     auto iter = ht.begin();
 
-    typename Hashtable<K, V>::pairT elem = *iter;
+    typename Hashtable<K, V>::pairT elem;
 
     if (iter != ht.end())
     {
+        elem = *iter;
         os << "(" << elem.first << ", " << elem.second << ")";
         ++iter;
     }
@@ -274,6 +285,5 @@ ostream& operator<<(ostream &os, Hashtable<K, V>& ht)
 
     return os;
 }
-
 
 #endif /* HASHTABLE_H_ */

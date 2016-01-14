@@ -205,7 +205,7 @@ void HashtableTest::testIterator()
 
     // Test insert via []
 //    Ht ht;
-    pair<string, int> res;
+//    pair<string, int> res;
 
 //    cout << "Inserted elements via []" << endl;
 //    ht["Sameer"] = 44;
@@ -226,6 +226,11 @@ void HashtableTest::testIterator()
         { "Cthulu", 1500000 },
         { "Terminator T1000", 30 },
     };
+
+    Ht::iterator e1 = ht.end();
+    Ht::iterator e2 = ht.end();
+    cout << "e1 == e2?" << (e1 == e2) << endl;
+
 
 //    SequentialSearchST<keytype, valtype> st = {
 //            { "Sameer", 44 },
@@ -291,6 +296,10 @@ void HashtableTest::testIterator()
 
 void HashtableTest::testOutputStream()
 {
+    Ht htEmpty;
+    cout << "Output from operator<< overload for empty hashtable" << endl;
+    cout << htEmpty << endl;
+
     Ht ht = {
         { "Sameer", 44 },
         { "John", 32   },
@@ -308,9 +317,40 @@ void HashtableTest::testOutputStream()
     cout << ht << endl;
 }
 
+void HashtableTest::testDel()
+{
+    initializer_list<pairT> il =
+    {
+        { "Sameer", 44 },
+        { "John", 32   },
+        { "Rajiv", 80  },
+        { "Gordon", 100 },
+        { "Connor McCloud", 1500 },
+        { "Cthulu", 1500000 },
+        { "Terminator T1000", 30 },
+    };
+
+    Ht ht(il);
+
+    cout << "Deleting all elements from" << endl;
+    cout << ht << endl;
+
+    for(auto& elem: il)
+    {
+        cout << "Deleting " << elem.first << endl;
+        ht.del(elem.first);
+        cout << ht << endl;
+    }
+
+    cout << "All elements deleted" << endl;
+    cout << ht << endl;
+}
+
 void HashtableTest::runAll()
 {
-    testIterator();
+    testDel();
+//    testOutputStream();
+//    testIterator();
 //    test();
 //    testListInit();
 //    testListInitConst();
