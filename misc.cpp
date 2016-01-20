@@ -272,6 +272,10 @@ int main()
 
     htlp.dump("htlp");
 
+    cout << "contains Boyd Crowder " << htlp.contains("Boyd Crowder") << endl;
+    cout << "contains Mr. Spock " << htlp.contains("Mr. Spock") << endl;
+    cout << "contains Pee Wee Herman " << htlp.contains("Pee Wee Herman") << endl;
+
 //    try {
 //        cout << "get Terminator T1000: " << htlp.get("Terminator T1000") << endl;
 //    } catch (KeyNotFoundError& knfe) {

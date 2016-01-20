@@ -33,6 +33,7 @@ public:
 
     HashtableLp(const HashtableLp& other);
     HashtableLp(size_type initialSize = M_DEFAULT_SIZE);
+    ~HashtableLp();
     HashtableLp& operator=(HashtableLp rhs);
 
     iterator begin() {};
@@ -46,19 +47,21 @@ public:
     void dump(const string& header) const;
 
 private:
-    static const size_type M_DEFAULT_SIZE = 1;
+    static const size_type M_DEFAULT_SIZE = 15;
     size_type mM;
     size_type mSize = 0;
     pair_type **mData = nullptr;
     size_type *mCluster;
 
-    size_type hash(K key) { return std::hash<K>()(key) % mM; }
+    size_type hash(K key) const { return std::hash<K>()(key) % mM; }
 
 // TODO: make private
 public:
     void put(const K& key, const V& val);
     V& get(const K& key);
     void resize(size_type newSize);
+    void del(const K& key);
+    bool contains(const K& key) const;
 };
 
 template<class K, class V>
@@ -80,6 +83,12 @@ HashtableLp<K, V>& HashtableLp<K, V>::operator=(HashtableLp rhs)
     swap(mM, rhs.mM);
 
     return *this;
+}
+
+template<class K, class V>
+HashtableLp<K, V>::~HashtableLp()
+{
+    delete[] mData;
 }
 
 template<class K, class V>
@@ -138,8 +147,6 @@ void HashtableLp<K, V>::dump(const string& header) const
     int max = mCluster[0];
     for (size_type i = 0; i < mM; ++i) {
         cout << "cluster " << i << " " << mCluster[i] << endl;
-        if (mData[i] == nullptr) cout << "data " << i << " null" << endl;
-        else                     cout << "data " << i << mData[i]->first << " " << mData[i]->second << endl;
         total += mCluster[i];
         if (mCluster[i] < min) min = mCluster[i];
         if (mCluster[i] > max) max = mCluster[i];
@@ -159,7 +166,6 @@ void HashtableLp<K, V>::resize(size_type newSize)
 {
     HashtableLp htNew(newSize);
 
-
 //    htNew.dump("resizing: htNew");
     for (int i = 0; i < mM; ++i) {
         if (mData[i] != nullptr)
@@ -172,6 +178,17 @@ void HashtableLp<K, V>::resize(size_type newSize)
     swap(mSize, htNew.mSize);
     swap(mData, htNew.mData);
     swap(mCluster, htNew.mCluster);
+}
+
+template<class K, class V>
+bool HashtableLp<K, V>::contains(const K& key) const
+{
+    for (size_type i = hash(key); mData[i] != nullptr; ++i)
+    {
+        if (mData[i]->first == key) return true;
+    }
+
+    return false;
 }
 
 #endif /* HASHTABLELP_H_ */
