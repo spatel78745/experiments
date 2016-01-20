@@ -24,6 +24,7 @@
 #include "SequentialSearchSTTest.h"
 #include "Hashtable.h"
 #include "HashtableTest.h"
+#include "HashtableLp.h"
 
 using namespace std;
 
@@ -251,9 +252,48 @@ ostream& operator<<(ostream &os, const Dummy<T>& d)
 
 int main()
 {
+    typedef HashtableLp<string, int> HtlpT;
 
-    HashtableTest htTest;
-    htTest.runAll();
+    HtlpT htlp;
+
+    htlp.put("Sameer", 44);         // 1
+    htlp.put("Cthulu", 15000000);   // 2
+    htlp.put("Mad Max", 35);        // 3
+    htlp.put("Chuckie", 41);        // 4
+    htlp.put("Pinhead", 3);         // 5
+    htlp.put("Inspector Clouseau", 50); // 6
+    htlp.put("Mr. Spock", 90); // 7
+    htlp.put("Q", 35000); // 8
+    htlp.put("Hannibal Lector", 51); // 9
+    htlp.put("Boyd Crowder", 46); // 10
+    htlp.put("Dewey Crowe", 40); // 11
+    htlp.put("Stalin", 60); // 12
+    htlp.put("Julius Caesar", 45); // 13
+
+    htlp.dump("htlp");
+
+//    try {
+//        cout << "get Terminator T1000: " << htlp.get("Terminator T1000") << endl;
+//    } catch (KeyNotFoundError& knfe) {
+//        cout << "get failed, reason: " << knfe.what() << endl;
+//    }
+//    cout << "get Sameer: " << htlp.get("Sameer") << endl;
+
+//    htlp.dump("htlp");
+//    cout << "RESIZING" << endl;
+//    htlp.resize(25);
+//    htlp.dump("htlp");
+
+//    HashtableLp<string, int> htlp2(900);
+//
+//    htlp.dump("htlp");
+//    htlp2.dump("htlp2");
+//
+//    htlp2=htlp;
+//    htlp2.dump("htlp2");
+
+//    HashtableTest htTest;
+//    htTest.runAll();
 
 //    Hashtable<string, int> ht;
 //
