@@ -136,6 +136,29 @@ V& HashtableLp<K, V>::get(const K& key)
 }
 
 template<class K, class V>
+void HashtableLp<K, V>::del(const K& key)
+{
+    if (!contains(key)) return;
+
+    int i = hash(key);
+    while(mData[i]->first != key) i = (i + 1) % mM;
+    delete mData[i];
+    mData[i] = nullptr;
+
+    i = (i + 1) % mM;
+    while(mData[i] != nullptr)
+    {
+        K& keyToRedo = mData[i]->first;
+        V& valToRedo = mData[i]->second;
+        delete mData[i];
+        mData[i] = nullptr;
+        mSize--;
+        put(keyToRedo, valToRedo);
+    }
+    mSize--;
+}
+
+template<class K, class V>
 void HashtableLp<K, V>::dump(const string& header) const
 {
     cout << header << endl;

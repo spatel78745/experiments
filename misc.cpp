@@ -272,9 +272,15 @@ int main()
 
     htlp.dump("htlp");
 
-    cout << "contains Boyd Crowder " << htlp.contains("Boyd Crowder") << endl;
-    cout << "contains Mr. Spock " << htlp.contains("Mr. Spock") << endl;
-    cout << "contains Pee Wee Herman " << htlp.contains("Pee Wee Herman") << endl;
+//    cout << "contains Boyd Crowder " << htlp.contains("Boyd Crowder") << endl;
+//    cout << "contains Mr. Spock " << htlp.contains("Mr. Spock") << endl;
+//    cout << "contains Pee Wee Herman " << htlp.contains("Pee Wee Herman") << endl;
+
+    htlp.del("Boyd Crowder");
+    htlp.dump("delete Boyd Crowder");
+    htlp.del("Dewey Crowe");
+    htlp.dump("delete Dewey Crowe");
+
 
 //    try {
 //        cout << "get Terminator T1000: " << htlp.get("Terminator T1000") << endl;
