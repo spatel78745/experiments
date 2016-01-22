@@ -254,32 +254,91 @@ int main()
 {
     typedef HashtableLp<string, int> HtlpT;
 
-    HtlpT htlp;
+//    cout << "Hello" << endl;
 
-    htlp.put("Sameer", 44);         // 1
-    htlp.put("Cthulu", 15000000);   // 2
-    htlp.put("Mad Max", 35);        // 3
-    htlp.put("Chuckie", 41);        // 4
-    htlp.put("Pinhead", 3);         // 5
-    htlp.put("Inspector Clouseau", 50); // 6
-    htlp.put("Mr. Spock", 90); // 7
-    htlp.put("Q", 35000); // 8
-    htlp.put("Hannibal Lector", 51); // 9
-    htlp.put("Boyd Crowder", 46); // 10
-    htlp.put("Dewey Crowe", 40); // 11
-    htlp.put("Stalin", 60); // 12
-    htlp.put("Julius Caesar", 45); // 13
+    const HtlpT htc({
+    { "Sameer", 44 },         // 1
+    { "Cthulu", 15000000 },   // 2
+    { "Mad Max", 35 },        // 3
+    { "Chuckie", 41 },        // 4
+    { "Pinhead", 3 },         // 5
+    { "Inspector Clouseau", 50 }, // 6
+    { "Mr. Spock", 90 }, // 7
+    { "Q", 35000 }, // 8
+    { "Hannibal Lector", 51 }, // 9
+    { "Boyd Crowder", 46 }, // 10
+    { "Dewey Crowe", 40 }, // 11
+    { "Stalin", 60 }, // 12
+    { "Julius Caesar", 45 }, // 13
+    });
 
-    htlp.dump("htlp");
+//    htc.dump("htc");
+//    cout << "Stalin's old age " << htc.get("Stalin") << endl;
+//    int& v1 = htc.get("Stalin");
+//    v1 = 70;
+//    cout << "Stalin's new age " << htc.get("Stalin") << endl;
+//
+////    htc["Stalin"] = 80; // Can't do it because the const version returns a const reference
+//    cout << "Stalin's age via [] " << htc["Stalin"] << endl;
+
+
+//    HtlpT htlp;
+
+//    htlp.put("Sameer", 44);         // 1
+//    htlp.put("Cthulu", 15000000);   // 2
+//    htlp.put("Mad Max", 35);        // 3
+//    htlp.put("Chuckie", 41);        // 4
+//    htlp.put("Pinhead", 3);         // 5
+//    htlp.put("Inspector Clouseau", 50); // 6
+//    htlp.put("Mr. Spock", 90); // 7
+//    htlp.put("Q", 35000); // 8
+//    htlp.put("Hannibal Lector", 51); // 9
+//    htlp.put("Boyd Crowder", 46); // 10
+//    htlp.put("Dewey Crowe", 40); // 11
+//    htlp.put("Stalin", 60); // 12
+//    htlp.put("Julius Caesar", 45); // 13
+
+//    HtlpT htlp({
+//    { "Sameer", 44 },         // 1
+//    { "Cthulu", 15000000 },   // 2
+//    { "Mad Max", 35 },        // 3
+//    { "Chuckie", 41 },        // 4
+//    { "Pinhead", 3 },         // 5
+//    { "Inspector Clouseau", 50 }, // 6
+//    { "Mr. Spock", 90 }, // 7
+//    { "Q", 35000 }, // 8
+//    { "Hannibal Lector", 51 }, // 9
+//    { "Boyd Crowder", 46 }, // 10
+//    { "Dewey Crowe", 40 }, // 11
+//    { "Stalin", 60 }, // 12
+//    { "Julius Caesar", 45 }, // 13
+//    });
+//
+//    htlp.dump("htlp");
+//    cout << "Stalin's old age via [] " << htlp["Stalin"] << endl;
+//    cout << "Changed Stalin's age via [] " << endl;
+//    htlp["Stalin"] = 80;
+//    cout << "Stalin's new age via [] " << htlp["Stalin"] << endl;
+//
+//    cout << "Add an element via []" << endl;
+//    htlp["Marvin"] = 5;
+//    cout << "Marvin's age via [] " << htlp["Marvin"] << endl;
+//    htlp.dump("htlp add Marvin");
+
+//
+//    cout << "Stalin's old age " << htlp.get("Stalin") << endl;
+//    int& v1 = htlp.get("Stalin");
+//    v1 = 70;
+//    cout << "Stalin's new age " << htlp.get("Stalin") << endl;
 
 //    cout << "contains Boyd Crowder " << htlp.contains("Boyd Crowder") << endl;
 //    cout << "contains Mr. Spock " << htlp.contains("Mr. Spock") << endl;
 //    cout << "contains Pee Wee Herman " << htlp.contains("Pee Wee Herman") << endl;
 
-    htlp.del("Boyd Crowder");
-    htlp.dump("delete Boyd Crowder");
-    htlp.del("Dewey Crowe");
-    htlp.dump("delete Dewey Crowe");
+//    htlp.del("Boyd Crowder");
+//    htlp.dump("delete Boyd Crowder");
+//    htlp.del("Dewey Crowe");
+//    htlp.dump("delete Dewey Crowe");
 
 
 //    try {

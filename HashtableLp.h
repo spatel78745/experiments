@@ -33,21 +33,24 @@ public:
 
     HashtableLp(const HashtableLp& other);
     HashtableLp(size_type initialSize = M_DEFAULT_SIZE);
+    HashtableLp(const initializer_list<pair_type>& lst);
     ~HashtableLp();
     HashtableLp& operator=(HashtableLp rhs);
 
-    iterator begin() {};
-    iterator end() {};
-    const_iterator begin() const {};
-    const_iterator end() const {};
+    iterator begin() {}
+    iterator end() {}
+    const_iterator begin() const {}
+    const_iterator end() const {}
 
-    const pair_type& operator[](size_type i) const {};
-    pair_type& operator[](size_type i) {}
+    const V& operator[](const K& key) const { return get(key); }
+    V& operator[](const K& key) { return get(key, V()); }
 
     void dump(const string& header) const;
 
+    size_type size() const { return mSize; }
+
 private:
-    static const size_type M_DEFAULT_SIZE = 15;
+    static const size_type M_DEFAULT_SIZE = 100;
     size_type mM;
     size_type mSize = 0;
     pair_type **mData = nullptr;
@@ -58,7 +61,8 @@ private:
 // TODO: make private
 public:
     void put(const K& key, const V& val);
-    V& get(const K& key);
+    V& get(const K& key) const;
+    V& get(const K& key, const V& def);
     void resize(size_type newSize);
     void del(const K& key);
     bool contains(const K& key) const;
@@ -78,6 +82,13 @@ HashtableLp<K, V>::HashtableLp(const HashtableLp& other)
 }
 
 template<class K, class V>
+HashtableLp<K, V>::HashtableLp(const initializer_list<pair_type>& lst): HashtableLp()
+{
+    for(pair_type p: lst) put(p.first, p.second);
+}
+
+
+template<class K, class V>
 HashtableLp<K, V>& HashtableLp<K, V>::operator=(HashtableLp rhs)
 {
     swap(mM, rhs.mM);
@@ -88,19 +99,24 @@ HashtableLp<K, V>& HashtableLp<K, V>::operator=(HashtableLp rhs)
 template<class K, class V>
 HashtableLp<K, V>::~HashtableLp()
 {
+    size_type i;
+
+    for (i = 0; i < mM; ++i)
+    {
+        if (mData[i] != nullptr) delete mData[i];
+    }
+    cout << "Deleted " << i << " elements" << endl;
+
+    cout << "Deleting array" << endl;
     delete[] mData;
+
+    cout << "Deleting cluster array" << endl;
+    delete[] mCluster;
 }
 
 template<class K, class V>
 void HashtableLp<K, V>::put(const K& key, const V& val)
 {
-    // TODO: remove when resize complete
-    if (mSize == mM)
-    {
-        cout << "Table full cannot insert " << key << " " << val << endl;
-        return;
-    }
-
     if (mSize >= mM / 2) resize(mM * 2);
 
     size_type h = hash(key);
@@ -109,7 +125,7 @@ void HashtableLp<K, V>::put(const K& key, const V& val)
         if (mData[i] == nullptr)
         {
             mData[i] = new pair_type{key, val};
-            cout << "hash " << h << " slot " << i << " inserted " << mData[i]->first << " " << mData[i]->second << endl;
+//            cout << "hash " << h << " slot " << i << " inserted " << mData[i]->first << " " << mData[i]->second << endl;
             ++mSize;
             mCluster[h]++;
             return;
@@ -118,20 +134,34 @@ void HashtableLp<K, V>::put(const K& key, const V& val)
         if (mData[i]->first == key)
         {
             mData[i]->second = val;
-            cout << "slot " << i << " updated " << mData[i]->first << " " << mData[i]->second << endl;
+//            cout << "slot " << i << " updated " << mData[i]->first << " " << mData[i]->second << endl;
             return;
         }
     }
 }
 
 template<class K, class V>
-V& HashtableLp<K, V>::get(const K& key)
+V& HashtableLp<K, V>::get(const K& key) const
 {
     // TODO: same code in put(): factor out
     for (int i = hash(key); ; i = (i + 1) % mM)
     {
         if (mData[i] == nullptr) throw KeyNotFoundError("No such key");
         if (mData[i]->first == key) return mData[i]->second;
+    }
+}
+
+template<class K, class V>
+V& HashtableLp<K, V>::get(const K& key, const V& def)
+{
+    try
+    {
+        return get(key);
+    }
+    catch (KeyNotFoundError& e)
+    {
+        put(key, def);
+        return get(key);
     }
 }
 
@@ -156,6 +186,7 @@ void HashtableLp<K, V>::del(const K& key)
         put(keyToRedo, valToRedo);
     }
     mSize--;
+    if (mSize > 0 && mSize < mM/8) resize(mM / 2);
 }
 
 template<class K, class V>
