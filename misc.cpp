@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <ratio>
 #include <functional>
+#include <memory>
 #include "Bst.h"
 #include "FileBuffer.h"
 #include "TcpSocketTest.h"
@@ -250,27 +251,81 @@ ostream& operator<<(ostream &os, const Dummy<T>& d)
     return os;
 }
 
+
+class Pair
+{
+public:
+    Pair(string& first, string& second): mFirst(first), mSecond(second) {}
+    ~Pair() { cout << "destruct Pair " << mFirst << " " << mSecond << endl; }
+    string first() { return mFirst; }
+    string second() { return mSecond; }
+
+private:
+    string mFirst;
+    string mSecond;
+};
+
+class PairArray
+{
+public:
+    PairArray(size_t size)
+    {
+        mPairArray.reset(new unique_ptr<Pair>[size]);
+        cout << "Created an array of " << size << " Pairs" << endl;
+    }
+
+    void addPair(string first, string second)
+    {
+        mPairArray[mAvail++].reset(new Pair(first, second));
+        cout << "Added " << first << ", " << second << ". Total elements " << mAvail << endl;
+    }
+
+    void dump()
+    {
+        for (int i = 0; i < mAvail; ++i)
+        {
+            cout << i << " " << mPairArray[i]->first() << endl;
+        }
+    }
+
+    ~PairArray() { cout << "destruct PairArray. Total elements " << mAvail << endl; }
+
+private:
+    unique_ptr<unique_ptr<Pair> []> mPairArray;
+    size_t mAvail = 0;
+};
+
+
 int main()
 {
-    typedef HashtableLp<string, int> HtlpT;
+    PairArray pa(50);
+    pa.addPair("key1", "val1");
+    pa.addPair("key2", "val2");
+    pa.addPair("key3", "val3");
+    pa.addPair("key4", "val4");
+    pa.addPair("key5", "val5");
+    pa.addPair("key6", "val6");
+    pa.addPair("key7", "val7");
+
+//    typedef HashtableLp<string, int> HtlpT;
 
 //    cout << "Hello" << endl;
 
-    const HtlpT htc({
-    { "Sameer", 44 },         // 1
-    { "Cthulu", 15000000 },   // 2
-    { "Mad Max", 35 },        // 3
-    { "Chuckie", 41 },        // 4
-    { "Pinhead", 3 },         // 5
-    { "Inspector Clouseau", 50 }, // 6
-    { "Mr. Spock", 90 }, // 7
-    { "Q", 35000 }, // 8
-    { "Hannibal Lector", 51 }, // 9
-    { "Boyd Crowder", 46 }, // 10
-    { "Dewey Crowe", 40 }, // 11
-    { "Stalin", 60 }, // 12
-    { "Julius Caesar", 45 }, // 13
-    });
+//    const HtlpT htc({
+//    { "Sameer", 44 },         // 1
+//    { "Cthulu", 15000000 },   // 2
+//    { "Mad Max", 35 },        // 3
+//    { "Chuckie", 41 },        // 4
+//    { "Pinhead", 3 },         // 5
+//    { "Inspector Clouseau", 50 }, // 6
+//    { "Mr. Spock", 90 }, // 7
+//    { "Q", 35000 }, // 8
+//    { "Hannibal Lector", 51 }, // 9
+//    { "Boyd Crowder", 46 }, // 10
+//    { "Dewey Crowe", 40 }, // 11
+//    { "Stalin", 60 }, // 12
+//    { "Julius Caesar", 45 }, // 13
+//    });
 
 //    htc.dump("htc");
 //    cout << "Stalin's old age " << htc.get("Stalin") << endl;

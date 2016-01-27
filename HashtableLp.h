@@ -18,6 +18,16 @@ public:
     KeyNotFoundError(const char * what) : logic_error(what) {}
 };
 
+template<class K, class V>
+class TestPair: public pair<K, V>
+{
+    TestPair(K& key, V& val): pair<K, V>(key, val) {};
+
+    ~TestPair()
+    {
+        cout << "Destroying " << this->first << " " << this->second << endl;
+    }
+};
 
 template<class K, class V>
 class HashtableLp
@@ -28,6 +38,7 @@ public:
     typedef V value_type;
     typedef K key_type;
     typedef pair<K, V> pair_type;
+//    typedef TestPair<K, V> pair_type;
     typedef pair_type *iterator;
     typedef const pair_type *const_iterator;
 
